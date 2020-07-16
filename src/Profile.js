@@ -11,41 +11,52 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
+import TextField from '@material-ui/core/TextField';
 
 import Score from './Score';
 
 
-const API_KEY = ;
+const API_KEY = '';
 const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
 class Profile extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {profile: {}, query: 'mimai'}
+    this.state = {profile: {}, query: '', submitted: false}
     console.log(this.state);
     this.getRank = this.getRank.bind(this);
     this.getProfile = this.getProfile.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     //this.getRole = this.getRole.bind(this);
   }
 
-  // getRank = async () => {
-  //   if(this.state.profile.summonerName == "mimai") {
-  //     this.setState({profile: {summonerName: this.props.name, tier: 'PLATINUM', division: 'I', lp: 9}})
-  //   }
-  //   else {
-  //     this.setState({profile: {summonerName: this.props.name, tier: 'IRON', division: 'IV', lp: 4}})
-  //   }
-  // }
+
+
+  getRank = async () => {
+    if(this.state.query == "mimai") {
+      this.setState({profile: {summonerName: this.state.query, tier: 'PLATINUM', division: 'I', lp: 9}})
+    }
+    else {
+      this.setState({profile: {summonerName: this.state.query, tier: 'IRON', division: 'IV', lp: 4}})
+    }
+  }
 
   componentDidMount(){
-    this.getRank();
+    if(this.state.submitted){
+      console.log("full")
+      this.getRank();
+    }
+    else {
+      console.log("empty")
+    }
+    
     //this.getRole();
     console.log(this.state)
   }
 
-  getProfile = async () => {
-    
 
+  getProfile = async () => {
     const url = `https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${this.state.query}?api_key=${API_KEY}`;
     const response = await fetch(proxyurl + url);
 
@@ -55,24 +66,24 @@ class Profile extends React.Component {
 
   }
 
-  getRank = async () => {
+  // getRank = async () => {
 
-    let id = await this.getProfile();
-    const url = `https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/${id.id}?api_key=${API_KEY}`;
-    const response = await fetch(proxyurl + url);
+  //   let id = await this.getProfile();
+  //   const url = `https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/${id.id}?api_key=${API_KEY}`;
+  //   const response = await fetch(proxyurl + url);
 
-    const data = await response.json();
-    let data3;
-    let i;
-    for(i = 0; i < data.length; i++) {
-      if (data[i].queueType.localeCompare('RANKED_SOLO_5x5') == 0) {
-        data3 = data[i];
+  //   const data = await response.json();
+  //   let data3;
+  //   let i;
+  //   for(i = 0; i < data.length; i++) {
+  //     if (data[i].queueType.localeCompare('RANKED_SOLO_5x5') == 0) {
+  //       data3 = data[i];
 
-      }
-    }
-    //console.log(data3)
-    this.setState({profile: data3});
-  }
+  //     }
+  //   }
+  //   //console.log(data3)
+  //   this.setState({profile: data3});
+  // }
 
   // getRole = async () => {
 
@@ -106,6 +117,17 @@ class Profile extends React.Component {
 
   // }
 
+  handleChange(event) {
+    console.log("change", event.target.value)
+    this.setState({query: event.target.value});
+  }
+
+  handleSubmit(event) {
+    this.setState({submitted: true});
+    this.getRank();
+    event.preventDefault();
+  }
+
   render(){
     const summonerName = this.state.profile.summonerName;
     const tier = this.state.profile.tier;
@@ -125,9 +147,11 @@ class Profile extends React.Component {
               title="Contemplative Reptile"
             /> */}
             <CardContent>
-              <Typography gutterBottom variant="h5" component="h2">
+              {(this.state.submitted) ? 
+              <div>
+                <Typography gutterBottom variant="h5" component="h2">
                 {summonerName}
-              </Typography>
+              </Typography> 
               <Typography variant="body2" color="textSecondary" component="p">
                 {tier} - {division}
               </Typography>
@@ -138,6 +162,18 @@ class Profile extends React.Component {
                 wins="0"
                 losses="0"
                 />
+              </div>
+              
+              : 
+              <div>
+                <form className="summonersearch" onSubmit={this.handleSubmit}>
+                <TextField id="standard-basic" label="Standard" onChange={this.handleChange}/>
+                <Button type="submit">Submit</Button>
+              </form>
+              </div>
+              
+              }
+            
             </CardContent>
           </CardActionArea>
           {/* <CardActions>

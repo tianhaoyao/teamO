@@ -15,7 +15,7 @@ function App() {
         <Grid container spacing={3}>
         
         <Grid item xs={12} sm={6}>
-          <Profile name="mimai"/>
+          <Profile/>
         </Grid>
 
         {/* <Grid item xs={12} sm={6}>
