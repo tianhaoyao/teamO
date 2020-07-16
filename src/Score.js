@@ -1,4 +1,5 @@
 import React from "react";
+import Typography from '@material-ui/core/Typography';
 
 const Score = ({tier, division, lp, wins, losses}) => {
 
@@ -25,7 +26,7 @@ const Score = ({tier, division, lp, wins, losses}) => {
     }
 
     return(
-        <p>Score: {calculate()}</p>
+        <Typography variant="body2" color="textSecondary" component="p">Score: {calculate()}</Typography>
     );
 }
 

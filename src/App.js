@@ -18,42 +18,42 @@ function App() {
           <Profile/>
         </Grid>
 
-        {/* <Grid item xs={12} sm={6}>
-          <Profile name="iventhos"/>
+        <Grid item xs={12} sm={6}>
+          <Profile/>
         </Grid>
         
         <Grid item xs={12} sm={6}>
-          <Profile name="frezzie"/>
+          <Profile/>
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <Profile name="retard"/>
+          <Profile/>
         </Grid>
         
         <Grid item xs={12} sm={6}>
-          <Profile name="retard"/>
+          <Profile/>
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <Profile name="retard"/>
+          <Profile/>
         </Grid>
         
         <Grid item xs={12} sm={6}>
-          <Profile name="retard"/>
+          <Profile/>
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <Profile name="retard"/>
+          <Profile/>
         </Grid>
         
         <Grid item xs={12} sm={6}>
-          <Profile name="retard"/>
+          <Profile/>
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <Profile name="retard"/>
+          <Profile/>
         </Grid>
-         */}
+        
 
       </Grid>
       </Container>

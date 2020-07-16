@@ -16,7 +16,7 @@ import TextField from '@material-ui/core/TextField';
 import Score from './Score';
 
 
-const API_KEY = '';
+const API_KEY = 'RGAPI-e9253438-86f7-4f88-b1a1-1846a9d533b5';
 const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
 class Profile extends React.Component {
@@ -28,32 +28,33 @@ class Profile extends React.Component {
     this.getProfile = this.getProfile.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
     //this.getRole = this.getRole.bind(this);
   }
 
 
 
-  getRank = async () => {
-    if(this.state.query == "mimai") {
-      this.setState({profile: {summonerName: this.state.query, tier: 'PLATINUM', division: 'I', lp: 9}})
-    }
-    else {
-      this.setState({profile: {summonerName: this.state.query, tier: 'IRON', division: 'IV', lp: 4}})
-    }
-  }
+  // getRank = async () => {
+  //   if(this.state.query == "mimai") {
+  //     this.setState({profile: {summonerName: this.state.query, tier: 'PLATINUM', rank: 'I', leaguePoints: 9}})
+  //   }
+  //   else {
+  //     this.setState({profile: {summonerName: this.state.query, tier: 'IRON', rank: 'IV', leaguePoints: 4}})
+  //   }
+  // }
 
-  componentDidMount(){
-    if(this.state.submitted){
-      console.log("full")
-      this.getRank();
-    }
-    else {
-      console.log("empty")
-    }
+  // componentDidMount(){
+  //   if(this.state.submitted){
+  //     console.log("full")
+  //     this.getRank();
+  //   }
+  //   else {
+  //     console.log("empty")
+  //   }
     
-    //this.getRole();
-    console.log(this.state)
-  }
+  //   //this.getRole();
+  //   console.log(this.state)
+  // }
 
 
   getProfile = async () => {
@@ -66,56 +67,56 @@ class Profile extends React.Component {
 
   }
 
-  // getRank = async () => {
+  getRank = async () => {
 
-  //   let id = await this.getProfile();
-  //   const url = `https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/${id.id}?api_key=${API_KEY}`;
-  //   const response = await fetch(proxyurl + url);
+    let id = await this.getProfile();
+    const url = `https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/${id.id}?api_key=${API_KEY}`;
+    const response = await fetch(proxyurl + url);
 
-  //   const data = await response.json();
-  //   let data3;
-  //   let i;
-  //   for(i = 0; i < data.length; i++) {
-  //     if (data[i].queueType.localeCompare('RANKED_SOLO_5x5') == 0) {
-  //       data3 = data[i];
+    const data = await response.json();
+    let data3;
+    let i;
+    for(i = 0; i < data.length; i++) {
+      if (data[i].queueType.localeCompare('RANKED_SOLO_5x5') == 0) {
+        data3 = data[i];
 
-  //     }
-  //   }
-  //   //console.log(data3)
-  //   this.setState({profile: data3});
-  // }
+      }
+    }
+    console.log(data3)
+    this.setState({profile: data3});
+  }
 
-  // getRole = async () => {
+  getRole = async () => {
 
-  //   let id = await this.getProfile();
-  //   const url = `https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${id.accountId}?queue=420&season=13&api_key=${API_KEY}`;
-  //   const response = await fetch(proxyurl + url);
-  //   const data = await response.json();
-  //   //console.log(data)
+    let id = await this.getProfile();
+    const url = `https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${id.accountId}?queue=420&season=13&api_key=${API_KEY}`;
+    const response = await fetch(proxyurl + url);
+    const data = await response.json();
+    //console.log(data)
 
-  //   let i;
-  //   let rankedCount = {"MID":0, "TOP":0, "SUPPORT":0, "BOTTOM":0, "JUNGLE":0};
-  //   for(i = 0; i < data.matches.length; i++) {
-  //     if (data.matches[i].lane.localeCompare('MID') == 0) {
-  //       rankedCount["MID"] += 1;
-  //     }
-  //     else if (data.matches[i].lane.localeCompare('JUNGLE') == 0) {
-  //       rankedCount["JUNGLE"] += 1;
-  //     }
-  //     else if (data.matches[i].lane.localeCompare('BOTTOM') == 0) {
-  //       rankedCount["BOTTOM"] += 1;
-  //     }
-  //     else if (data.matches[i].lane.localeCompare('SUPPORT') == 0) {
-  //       rankedCount["SUPPORT"] += 1;
-  //     }
-  //     else if (data.matches[i].lane.localeCompare('TOP') == 0) {
-  //       rankedCount["TOP"] += 1;
-  //     }
-  //   }
-  //   console.log("set role", rankedCount)
-  //   this.setState({role: rankedCount});
+    let i;
+    let rankedCount = {"MID":0, "TOP":0, "SUPPORT":0, "BOTTOM":0, "JUNGLE":0};
+    for(i = 0; i < data.matches.length; i++) {
+      if (data.matches[i].lane.localeCompare('MID') == 0) {
+        rankedCount["MID"] += 1;
+      }
+      else if (data.matches[i].lane.localeCompare('JUNGLE') == 0) {
+        rankedCount["JUNGLE"] += 1;
+      }
+      else if (data.matches[i].lane.localeCompare('BOTTOM') == 0) {
+        rankedCount["BOTTOM"] += 1;
+      }
+      else if (data.matches[i].lane.localeCompare('SUPPORT') == 0) {
+        rankedCount["SUPPORT"] += 1;
+      }
+      else if (data.matches[i].lane.localeCompare('TOP') == 0) {
+        rankedCount["TOP"] += 1;
+      }
+    }
+    console.log("set role", rankedCount)
+    this.setState({role: rankedCount});
 
-  // }
+  }
 
   handleChange(event) {
     console.log("change", event.target.value)
@@ -128,12 +129,16 @@ class Profile extends React.Component {
     event.preventDefault();
   }
 
+  handleEdit(event) {
+    this.setState({profile: {}, query: '', submitted: false});
+  }
+
   render(){
     const summonerName = this.state.profile.summonerName;
     const tier = this.state.profile.tier;
-    const division = this.state.profile.division;
+    const division = this.state.profile.rank;
     //const role = this.state.role;
-    const lp = this.state.profile.lp;
+    const lp = this.state.profile.leaguePoints;
     
     return (
       <div className="Profile">
@@ -151,17 +156,22 @@ class Profile extends React.Component {
               <div>
                 <Typography gutterBottom variant="h5" component="h2">
                 {summonerName}
-              </Typography> 
-              <Typography variant="body2" color="textSecondary" component="p">
-                {tier} - {division}
-              </Typography>
-              <Score
-                tier={tier}
-                division={division}
-                lp={lp}
-                wins="0"
-                losses="0"
-                />
+                </Typography> 
+                <Typography variant="body2" color="textSecondary" component="p">
+                  {tier} {division}
+                </Typography>
+                <Score
+                  tier={tier}
+                  division={division}
+                  lp={lp}
+                  wins="0"
+                  losses="0"
+                  />
+                <CardActions>
+                <Button size="small" color="primary" onClick={this.handleEdit}>
+                  Edit
+                </Button>
+              </CardActions>
               </div>
               
               : 
