@@ -16,7 +16,7 @@ import TextField from '@material-ui/core/TextField';
 import Score from './Score';
 
 
-const API_KEY = 'RGAPI-e9253438-86f7-4f88-b1a1-1846a9d533b5';
+const API_KEY = '';
 const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
 class Profile extends React.Component {
