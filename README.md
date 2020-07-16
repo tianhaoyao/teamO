@@ -10,5 +10,6 @@ $ cd teamO
 $ npm install @material-ui/core
 $ yarn start
 ```
+RiotGames API key required in Profile.js (this will be fixed later)
 
 # teamO
