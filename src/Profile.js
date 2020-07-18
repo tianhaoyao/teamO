@@ -24,7 +24,6 @@ class Profile extends React.Component {
   constructor(props) {
     super(props)
     this.state = {profile: {}, query: '', submitted: false, score: 0, prefRole: ''}
-    console.log(this.state);
     this.getRank = this.getRank.bind(this);
     this.getProfile = this.getProfile.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -34,36 +33,11 @@ class Profile extends React.Component {
   }
 
 
-
-  // getRank = async () => {
-  //   if(this.state.query == "mimai") {
-  //     this.setState({profile: {summonerName: this.state.query, tier: 'PLATINUM', rank: 'I', leaguePoints: 9}})
-  //   }
-  //   else {
-  //     this.setState({profile: {summonerName: this.state.query, tier: 'IRON', rank: 'IV', leaguePoints: 4}})
-  //   }
-  // }
-
-  // componentDidMount(){
-  //   if(this.state.submitted){
-  //     console.log("full")
-  //     this.getRank();
-  //   }
-  //   else {
-  //     console.log("empty")
-  //   }
-    
-  //   //this.getRole();
-  //   console.log(this.state)
-  // }
-
-
   getProfile = async () => {
     const url = `https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${this.state.query}?api_key=${API_KEY}`;
     const response = await fetch(proxyurl + url);
 
     const data = await response.json();
-    //console.log(data)
     return data;
 
   }
@@ -82,7 +56,7 @@ class Profile extends React.Component {
 
       }
     }
-    console.log(data3)
+
     // UNRANKED
     if(data3 == null) {
       this.setState({profile: {summonerName: this.state.query, tier: 'UNRANKED', rank: 'IV', leaguePoints: 0}});
@@ -99,7 +73,6 @@ class Profile extends React.Component {
     const url = `https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${id.accountId}?queue=420&api_key=${API_KEY}`;
     const response = await fetch(proxyurl + url);
     const data = await response.json();
-    //console.log(data)
 
     let i;
     let rankedCount = {"MID":0, "TOP":0, "SUPPORT":0, "BOTTOM":0, "JUNGLE":0};
@@ -148,7 +121,6 @@ class Profile extends React.Component {
 
   setScore(score) {
     alert("got", score);
-    //this.setState({score: score});
   }
 
   render(){
@@ -166,13 +138,6 @@ class Profile extends React.Component {
       <div className="Profile">
         <Card className="profile">
           <CardActionArea>
-            {/* <CardMedia
-              component="img"
-              alt="Contemplative Reptile"
-              height="140"
-              image="/static/images/cards/contemplative-reptile.jpg"
-              title="Contemplative Reptile"
-            /> */}
             <CardContent>
               {(this.state.submitted) ? 
               <div>
@@ -248,14 +213,6 @@ class Profile extends React.Component {
             
             </CardContent>
           </CardActionArea>
-          {/* <CardActions>
-            <Button size="small" color="primary">
-              Remove
-            </Button>
-            <Button size="small" color="primary">
-              Edit
-            </Button>
-          </CardActions> */}
         </Card>
       </div>
     );
