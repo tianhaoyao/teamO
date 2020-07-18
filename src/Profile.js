@@ -14,22 +14,23 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 
 import Score from './Score';
+import Icons from './Icons';
 
 
-const API_KEY = '';
+const API_KEY = process.env.REACT_APP_TEAMO_API_KEY;
 const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
 class Profile extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {profile: {}, query: '', submitted: false}
+    this.state = {profile: {}, query: '', submitted: false, score: 0, prefRole: ''}
     console.log(this.state);
     this.getRank = this.getRank.bind(this);
     this.getProfile = this.getProfile.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
-    //this.getRole = this.getRole.bind(this);
+    this.getRole = this.getRole.bind(this);
   }
 
 
@@ -72,7 +73,6 @@ class Profile extends React.Component {
     let id = await this.getProfile();
     const url = `https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/${id.id}?api_key=${API_KEY}`;
     const response = await fetch(proxyurl + url);
-
     const data = await response.json();
     let data3;
     let i;
@@ -83,36 +83,48 @@ class Profile extends React.Component {
       }
     }
     console.log(data3)
-    this.setState({profile: data3});
+    // UNRANKED
+    if(data3 == null) {
+      this.setState({profile: {summonerName: this.state.query, tier: 'UNRANKED', rank: 'IV', leaguePoints: 0}});
+    }
+    else {
+      this.setState({profile: data3});
+    }
+    
   }
 
   getRole = async () => {
 
     let id = await this.getProfile();
-    const url = `https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${id.accountId}?queue=420&season=13&api_key=${API_KEY}`;
+    const url = `https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${id.accountId}?queue=420&api_key=${API_KEY}`;
     const response = await fetch(proxyurl + url);
     const data = await response.json();
     //console.log(data)
 
     let i;
     let rankedCount = {"MID":0, "TOP":0, "SUPPORT":0, "BOTTOM":0, "JUNGLE":0};
-    for(i = 0; i < data.matches.length; i++) {
-      if (data.matches[i].lane.localeCompare('MID') == 0) {
-        rankedCount["MID"] += 1;
+    if(data.matches != null){
+      for(i = 0; i < data.matches.length; i++) {
+        if (data.matches[i].lane.localeCompare('MID') == 0) {
+          rankedCount["MID"] += 1;
+        }
+        else if (data.matches[i].lane.localeCompare('JUNGLE') == 0) {
+          rankedCount["JUNGLE"] += 1;
+        }
+        else if (data.matches[i].lane.localeCompare('BOTTOM') == 0 && data.matches[i].role.localeCompare("DUO_CARRY") == 0) {
+          rankedCount["BOTTOM"] += 1;
+        }
+        else if (data.matches[i].lane.localeCompare('BOTTOM') == 0 && data.matches[i].role.localeCompare("DUO_SUPPORT") == 0) {
+          rankedCount["SUPPORT"] += 1;
+        }
+        else if (data.matches[i].lane.localeCompare('TOP') == 0) {
+          rankedCount["TOP"] += 1;
+        }
       }
-      else if (data.matches[i].lane.localeCompare('JUNGLE') == 0) {
-        rankedCount["JUNGLE"] += 1;
-      }
-      else if (data.matches[i].lane.localeCompare('BOTTOM') == 0) {
-        rankedCount["BOTTOM"] += 1;
-      }
-      else if (data.matches[i].lane.localeCompare('SUPPORT') == 0) {
-        rankedCount["SUPPORT"] += 1;
-      }
-      else if (data.matches[i].lane.localeCompare('TOP') == 0) {
-        rankedCount["TOP"] += 1;
-      }
+      console.log(rankedCount);
     }
+    this.setState({prefRole: Object.keys(rankedCount).reduce((a, b) => rankedCount[a] > rankedCount[b] ? a : b)});
+    
     console.log("set role", rankedCount)
     this.setState({role: rankedCount});
 
@@ -126,6 +138,7 @@ class Profile extends React.Component {
   handleSubmit(event) {
     this.setState({submitted: true});
     this.getRank();
+    this.getRole();
     event.preventDefault();
   }
 
@@ -133,13 +146,22 @@ class Profile extends React.Component {
     this.setState({profile: {}, query: '', submitted: false});
   }
 
+  setScore(score) {
+    alert("got", score);
+    //this.setState({score: score});
+  }
+
   render(){
     const summonerName = this.state.profile.summonerName;
     const tier = this.state.profile.tier;
     const division = this.state.profile.rank;
-    //const role = this.state.role;
+    const role = this.state.role;
     const lp = this.state.profile.leaguePoints;
-    
+    const prefRole = this.state.prefRole;
+    const closeStyle = {
+      height: "100%",
+
+    };
     return (
       <div className="Profile">
         <Card className="profile">
@@ -154,32 +176,72 @@ class Profile extends React.Component {
             <CardContent>
               {(this.state.submitted) ? 
               <div>
-                <Typography gutterBottom variant="h5" component="h2">
-                {summonerName}
-                </Typography> 
-                <Typography variant="body2" color="textSecondary" component="p">
-                  {tier} {division}
-                </Typography>
-                <Score
-                  tier={tier}
-                  division={division}
-                  lp={lp}
-                  wins="0"
-                  losses="0"
+                <Grid container spacing={3} alignItems="center">
+                <Grid item xs={12} sm={3}>
+                    {(tier != null && role != null)?
+                    <Icons 
+                      tier={tier}
+                      division={division}>
+                    </Icons>
+                    :
+                    <br></br>
+                    }
+                  </Grid>
+                  <Grid item xs={12} sm={7}>
+                  <Typography gutterBottom variant="h5" component="h2">
+                  {summonerName}
+                  </Typography> 
+                  
+                  <Typography variant="body2" color="textSecondary" component="p">
+                    {tier} {division}
+                  </Typography>
+
+                  {(tier != null && role != null)?
+                  <div>
+                    <Score
+                    tier={tier}
+                    division={division}
+                    lp={lp}
+                    wins="0"
+                    losses="0"
+                    setScore={this.setScore.bind(this)}
                   />
-                <CardActions>
-                <Button size="small" color="primary" onClick={this.handleEdit}>
-                  Edit
-                </Button>
-              </CardActions>
+                  <Typography variant="body2" color="textSecondary" component="p">
+                   {/* mid: {role.MID} bot: {role.BOTTOM} supp: {role.SUPPORT} top: {role.TOP} jg: {role.JUNGLE} */}
+                   Pref: {prefRole}
+                  </Typography>
+                  
+                  {/* <Button onClick={console.log(this.state.score)}>yo</Button>
+                  {console.log('z',this.state.score)} */}
+                  </div>
+                  
+                  : <Typography variant="body2" color="textSecondary" component="p">Calculating...</Typography>
+                  }
+                  
+                  </Grid>
+                  
+                  <Grid item xs={12} sm={2}>
+                    <div style={closeStyle}>
+                    <Button style={{ "minHeight": "100px", "maxWidth": "50px"}} color="primary" onClick={this.handleEdit}>
+                      X
+                    </Button>
+                    </div>
+                  </Grid>
+                </Grid>
               </div>
               
               : 
               <div>
                 <form className="summonersearch" onSubmit={this.handleSubmit}>
-                <TextField id="standard-basic" label="Standard" onChange={this.handleChange}/>
-                <Button type="submit">Submit</Button>
-              </form>
+                  <Grid container spacing={3} alignItems="center">
+                    <Grid item xs={12} sm={9}>
+                      <TextField id="standard-basic" label="Summoner Name" onChange={this.handleChange} fullWidth="true"/>
+                    </Grid>
+                    <Grid item xs={12} sm={3}>
+                      <Button type="submit">Submit</Button>
+                    </Grid>
+                  </Grid>
+                </form>
               </div>
               
               }
