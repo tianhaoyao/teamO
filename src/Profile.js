@@ -156,11 +156,16 @@ class Profile extends React.Component {
                   <Typography gutterBottom variant="h5" component="h2">
                   {summonerName}
                   </Typography> 
-                  
-                  <Typography variant="body2" color="textSecondary" component="p">
-                    {tier} {division}
-                  </Typography>
 
+                  {(tier!="UNRANKED") ?
+                  <Typography variant="body2" color="textSecondary" component="p">
+                     {tier} {division}
+                  </Typography>
+                  :
+                  <Typography variant="body2" color="textSecondary" component="p">
+                     {tier}
+                  </Typography>
+                  }
                   {(tier != null && role != null)?
                   <div>
                     <Score
