@@ -2,16 +2,9 @@ import React from 'react';
 import logo from './teamo.png'
 import ReactDOM from 'react-dom';
 import Button from '@material-ui/core/Button';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
+
+import {Grid, Card, CardActionArea, CardContent, Typography, TextField, CircularProgress} from '@material-ui/core'
+import {Edit} from '@material-ui/icons';
 
 import Score from './Score';
 import Icons from './Icons';
@@ -116,7 +109,7 @@ class Profile extends React.Component {
   }
 
   handleEdit(event) {
-    this.setState({profile: {}, query: '', submitted: false});
+    this.setState({profile: {}, submitted: false});
   }
 
   setScore(score) {
@@ -185,7 +178,7 @@ class Profile extends React.Component {
                   {console.log('z',this.state.score)} */}
                   </div>
                   
-                  : <Typography variant="body2" color="textSecondary" component="p">Calculating...</Typography>
+                  : <CircularProgress />
                   }
                   
                   </Grid>
@@ -193,7 +186,7 @@ class Profile extends React.Component {
                   <Grid item xs={12} sm={2}>
                     <div style={closeStyle}>
                     <Button style={{ "minHeight": "100px", "maxWidth": "50px"}} color="primary" onClick={this.handleEdit}>
-                      X
+                      <Edit/>
                     </Button>
                     </div>
                   </Grid>
@@ -205,7 +198,7 @@ class Profile extends React.Component {
                 <form className="summonersearch" onSubmit={this.handleSubmit}>
                   <Grid container spacing={3} alignItems="center">
                     <Grid item xs={12} sm={9}>
-                      <TextField id="standard-basic" label="Summoner Name" onChange={this.handleChange} fullWidth="true"/>
+                      <TextField id="standard-basic" label="Summoner Name" onChange={this.handleChange} fullWidth="true" defaultValue={this.state.query}/>
                     </Grid>
                     <Grid item xs={12} sm={3}>
                       <Button type="submit">Submit</Button>

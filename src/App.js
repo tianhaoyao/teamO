@@ -1,10 +1,11 @@
 import React from 'react';
 import logo from './teamo.png'
 import ReactDOM from 'react-dom';
-import Button from '@material-ui/core/Button';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
+
+import {Container, Grid, Divider} from '@material-ui/core'
+
 import Profile from './Profile';
+
 
 class App extends React.Component {
   getScore() {
@@ -16,6 +17,7 @@ class App extends React.Component {
         <Container maxWidth="md"> 
           
           <img src={logo}></img>
+          <Divider />
           <Grid container spacing={3}>
           
           <Grid item xs={12} sm={6}>
