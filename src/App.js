@@ -2,24 +2,26 @@ import React from 'react';
 import logo from './teamo.png'
 import ReactDOM from 'react-dom';
 
-import {Container, Grid, Divider} from '@material-ui/core'
+import {Container, Grid, Divider, Button} from '@material-ui/core'
 
 import Profile from './Profile';
 
 import {useSelector} from 'react-redux';
+import scoreReducer from './reducers/scoreCollection';
+import { findAllByDisplayValue } from '@testing-library/react';
 
 function App(){
   
 
  
-  const scores = useSelector(state => state.scoreReducer[1]);
+   const scores = useSelector(state => state.scoreReducer);
     return (
       <div className="App">
         <Container maxWidth="md"> 
           
           <img src={logo}></img>
 
-          <p>{scores}</p>
+          <p>SCORES {scores}</p>
 
           <Divider />
           <Grid container spacing={3}>
@@ -64,6 +66,7 @@ function App(){
             <Profile/>
           </Grid>
           
+
   
         </Grid>
         </Container>

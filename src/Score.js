@@ -12,9 +12,14 @@ function Score(props) {
 
     useEffect(() => {
         calculate();
-    });
+    }, []);
+
+        
+
 
     function calculate() {
+        console.log(props);
+        console.log(props.name);
         let lookup = {"IRON": 300, 
                         "BRONZE": 700,
                         "SILVER": 1200, 
@@ -31,11 +36,13 @@ function Score(props) {
                             "II": 200,
                             "I": 300
         }
+        let name = props.name;
+        let s = lookup[props.tier] + divisionLookup[props.division] + props.lp;
+        setName(name);
+        setScore(s);
         
-        setName(props.name);
-        setScore(lookup[props.tier] + divisionLookup[props.division] + props.lp);
+        dispatch(update(name,s));
         
-        dispatch(update(name,score));
         return lookup[props.tier] + divisionLookup[props.division] + props.lp;
         
 

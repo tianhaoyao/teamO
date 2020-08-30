@@ -159,7 +159,7 @@ class Profile extends React.Component {
                      {tier}
                   </Typography>
                   }
-                  {(tier != null && role != null)?
+                  {(tier != null && role != null && lp != null)?
                   <div>
                     <Score
                     name={summonerName}
