@@ -162,12 +162,12 @@ class Profile extends React.Component {
                   {(tier != null && role != null)?
                   <div>
                     <Score
+                    name={summonerName}
                     tier={tier}
                     division={division}
                     lp={lp}
                     wins="0"
                     losses="0"
-                    setScore={this.setScore.bind(this)}
                   />
                   <Typography variant="body2" color="textSecondary" component="p">
                    {/* mid: {role.MID} bot: {role.BOTTOM} supp: {role.SUPPORT} top: {role.TOP} jg: {role.JUNGLE} */}

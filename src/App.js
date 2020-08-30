@@ -6,22 +6,26 @@ import {Container, Grid, Divider} from '@material-ui/core'
 
 import Profile from './Profile';
 
+import {useSelector} from 'react-redux';
 
-class App extends React.Component {
-  getScore() {
-    alert("yo");
-  }
-  render(){
+function App(){
+  
+
+ 
+  const scores = useSelector(state => state.scoreReducer[1]);
     return (
       <div className="App">
         <Container maxWidth="md"> 
           
           <img src={logo}></img>
+
+          <p>{scores}</p>
+
           <Divider />
           <Grid container spacing={3}>
           
           <Grid item xs={12} sm={6}>
-            <Profile getScore={this.getScore}/>
+            <Profile/>
           </Grid>
   
           <Grid item xs={12} sm={6}>
@@ -71,8 +75,8 @@ class App extends React.Component {
         
       </div>
     );
-  }
   
-}
+  
+};
 
 export default App;
