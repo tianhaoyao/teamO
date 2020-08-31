@@ -168,6 +168,7 @@ class Profile extends React.Component {
                     lp={lp}
                     wins="0"
                     losses="0"
+                    pref={prefRole}
                   />
                   <Typography variant="body2" color="textSecondary" component="p">
                    {/* mid: {role.MID} bot: {role.BOTTOM} supp: {role.SUPPORT} top: {role.TOP} jg: {role.JUNGLE} */}
