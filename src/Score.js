@@ -10,6 +10,7 @@ function Score(props) {
     const [score, setScore] = useState(0);
     const [name, setName] = useState("");
     const [pref, setPref] = useState("");
+    const [pref2, setPref2] = useState("");
 
     useEffect(() => {
         calculate();
@@ -22,6 +23,7 @@ function Score(props) {
         console.log(props);
         console.log(props.name);
         console.log(props.pref);
+        console.log(props.pref2);
         let lookup = {"IRON": 300, 
                         "BRONZE": 700,
                         "SILVER": 1200, 
@@ -41,11 +43,13 @@ function Score(props) {
         let name = props.name;
         let s = lookup[props.tier] + divisionLookup[props.division] + props.lp;
         let pref = props.pref;
+        let pref2 = props.pref2;
         setName(name);
         setScore(s);
         setPref(pref);
+        setPref2(pref2);
         
-        dispatch(update(name, s, pref));
+        dispatch(update(name, s, pref, pref2));
         
         return lookup[props.tier] + divisionLookup[props.division] + props.lp;
         

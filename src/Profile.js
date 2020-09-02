@@ -16,7 +16,7 @@ const proxyurl = "https://cors-anywhere.herokuapp.com/";
 class Profile extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {profile: {}, query: '', submitted: false, score: 0, prefRole: ''}
+    this.state = {profile: {}, query: '', submitted: false, score: 0, prefRole: '', prefRole2: ''}
     this.getRank = this.getRank.bind(this);
     this.getProfile = this.getProfile.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -89,8 +89,12 @@ class Profile extends React.Component {
       }
       console.log(rankedCount);
     }
-    this.setState({prefRole: Object.keys(rankedCount).reduce((a, b) => rankedCount[a] > rankedCount[b] ? a : b)});
-    
+    let firstPref = Object.keys(rankedCount).reduce((a, b) => rankedCount[a] > rankedCount[b] ? a : b)
+    this.setState({prefRole: firstPref});
+    let temp = rankedCount;
+    delete temp[firstPref];
+    let secondPref = Object.keys(temp).reduce((a, b) => temp[a] > temp[b] ? a : b)
+    this.setState({prefRole2: secondPref});
     console.log("set role", rankedCount)
     this.setState({role: rankedCount});
 
@@ -123,6 +127,7 @@ class Profile extends React.Component {
     const role = this.state.role;
     const lp = this.state.profile.leaguePoints;
     const prefRole = this.state.prefRole;
+    const prefRole2 = this.state.prefRole2;
     const closeStyle = {
       height: "100%",
 
@@ -169,10 +174,11 @@ class Profile extends React.Component {
                     wins="0"
                     losses="0"
                     pref={prefRole}
+                    pref2={prefRole2}
                   />
                   <Typography variant="body2" color="textSecondary" component="p">
                    {/* mid: {role.MID} bot: {role.BOTTOM} supp: {role.SUPPORT} top: {role.TOP} jg: {role.JUNGLE} */}
-                   Pref: {prefRole}
+                   Pref: {prefRole}, {prefRole2}
                   </Typography>
                   
                   {/* <Button onClick={console.log(this.state.score)}>yo</Button>
