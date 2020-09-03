@@ -10,6 +10,7 @@ import Score from './Score';
 import Icons from './Icons';
 
 
+
 const API_KEY = process.env.REACT_APP_TEAMO_API_KEY;
 const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
@@ -134,7 +135,7 @@ class Profile extends React.Component {
     };
     return (
       <div className="Profile">
-        <Card className="profile">
+        <Card className="profile" style={{backgroundColor: "#F5F5F5"}}>
           <CardActionArea>
             <CardContent>
               {(this.state.submitted) ? 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import Typography from '@material-ui/core/Typography';
-import {update} from './actions';
+import {updatePlayer} from './actions';
 import {useDispatch} from 'react-redux';
 function Score(props) {
 
@@ -49,7 +49,7 @@ function Score(props) {
         setPref(pref);
         setPref2(pref2);
         
-        dispatch(update(name, s, pref, pref2));
+        dispatch(updatePlayer(name, s, pref, pref2));
         
         return lookup[props.tier] + divisionLookup[props.division] + props.lp;
         

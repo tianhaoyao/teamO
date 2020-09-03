@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
 
 import Typography from '@material-ui/core/Typography';
-import {update} from './actions';
+import {update, updateTeam, updateTotal} from './actions';
 import {Container, Grid, Divider, Button} from '@material-ui/core'
 
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 import scoreReducer from './reducers/scoreCollection';
+
 function Sort() {
+    const dispatch = useDispatch();
+
     const scoresArray = useSelector(state => state.scoreReducer);
+    
     let sortedArray = [];
     let team = [['-', '-', '-', '-', '-'], ['-', '-', '-', '-', '-']];
     let extras = [];
     let extraSlots = [];
     let teamScore = [0, 0];
-
 
 
     // players are structured [ (str) summonername, (int) scorerating, (str) preferred position ]
@@ -250,19 +253,34 @@ function Sort() {
 
         adjust();
         console.log("FINAL TEAMS:", team[0], team[1]);
+        console.log("FINAL SCORES:", teamScore[0], teamScore[1]);
+        dispatch(updateTeam(team));
+        dispatch(updateTotal(teamScore));
+
     }
 
     
 
     return(
         <div>
-            <p>SCORES {scoresArray}</p>
-            <Typography variant="body2" color="textSecondary" component="p">Team1: {team[0]} Team2: {team[1]}</Typography>
-            <Typography variant="body2" color="textSecondary" component="p">TeamScore: {teamScore}</Typography>
-            <Typography variant="body2" color="textSecondary" component="p">Extras: {extras}</Typography>
-            <Typography variant="body2" color="textSecondary" component="p">Extra Slots 1: {extraSlots[0]} Extra Slots 2: {extraSlots[1]}</Typography>
-            <Button onclick={sortTeam()}>DONE</Button>
 
+            {/* <Grid container spacing={3}>
+            
+            <Grid item xs={12} sm={6}>
+                <Typography gutterBottom variant="h5" component="h2">
+                  Score: {teamScoresArray[0]}
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                
+                <Typography gutterBottom variant="h5" component="h2">
+                  Score: {teamScoresArray[1]}
+                </Typography>
+                
+              </Grid>
+            </Grid> */}
+                        {sortTeam()}
             
         </div>
     );
