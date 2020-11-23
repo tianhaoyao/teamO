@@ -10,28 +10,29 @@ import Score from './Score';
 import Icons from './Icons';
 
 
-
+const NUM_RECENT_MATCH = 10;
 const API_KEY = process.env.REACT_APP_TEAMO_API_KEY;
 const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
 class Profile extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {profile: {}, query: '', submitted: false, score: 0, prefRole: '', prefRole2: ''}
+    this.state = {profile: {}, query: '', submitted: false, score: 0, prefRole: '', prefRole2: '', stats: {}}
     this.getRank = this.getRank.bind(this);
     this.getProfile = this.getProfile.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleEdit = this.handleEdit.bind(this);
     this.getRole = this.getRole.bind(this);
   }
 
 
   getProfile = async () => {
+    console.log("fetching");
     const url = `https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${this.state.query}?api_key=${API_KEY}`;
     const response = await fetch(proxyurl + url);
 
     const data = await response.json();
+    console.log("fetched");
     return data;
 
   }
@@ -53,7 +54,7 @@ class Profile extends React.Component {
 
     // UNRANKED
     if(data3 == null) {
-      this.setState({profile: {summonerName: this.state.query, tier: 'UNRANKED', rank: 'IV', leaguePoints: 0}});
+      this.setState({profile: {summonerName: this.state.query, tier: 'UNRANKED', rank: 'IV', leaguePoints: 0, summonerId: id.id}});
     }
     else {
       this.setState({profile: data3});
@@ -69,9 +70,26 @@ class Profile extends React.Component {
     const data = await response.json();
 
     let i;
+    let matchdata = [];
+    let kills = 0;
+    let deaths = 0;
+    let assists = 0;
+    let cs = 0;
+    let matchtime = 0;
+    let currentmatch;
     let rankedCount = {"MID":0, "TOP":0, "SUPPORT":0, "BOTTOM":0, "JUNGLE":0};
     if(data.matches != null){
       for(i = 0; i < data.matches.length; i++) {
+        if(i <= NUM_RECENT_MATCH){
+          currentmatch = await this.getMatchStats(data.matches[i]);
+          kills += currentmatch.kills;
+          deaths += currentmatch.deaths;
+          assists += currentmatch.assists;
+          cs += currentmatch.cs;
+          matchtime += currentmatch.matchtime;
+          matchdata.push(currentmatch);
+
+        }
         if (data.matches[i].lane.localeCompare('MID') == 0) {
           rankedCount["MID"] += 1;
         }
@@ -88,21 +106,64 @@ class Profile extends React.Component {
           rankedCount["TOP"] += 1;
         }
       }
-      console.log(rankedCount);
+
     }
+    let kda = (kills + assists) / deaths;
+    let cspm = cs/matchtime*60;
+    console.log("YO", cspm)
+    this.setState({stats: {kda: kda, cspm: cspm}});
+    console.log(this.state)
     let firstPref = Object.keys(rankedCount).reduce((a, b) => rankedCount[a] > rankedCount[b] ? a : b)
     this.setState({prefRole: firstPref});
     let temp = rankedCount;
     delete temp[firstPref];
     let secondPref = Object.keys(temp).reduce((a, b) => temp[a] > temp[b] ? a : b)
     this.setState({prefRole2: secondPref});
-    console.log("set role", rankedCount)
     this.setState({role: rankedCount});
 
   }
 
+  getMatchStats = async (match) => {
+    const matchurl = `https://na1.api.riotgames.com/lol/match/v4/matches/${match.gameId}?api_key=${API_KEY}`;
+    const matchresponse = await fetch(proxyurl + matchurl);
+    const matchdata = await matchresponse.json();
+
+    let matchtime = matchdata.gameDuration;
+    let found = false;
+    let i = 0;
+    let participantid = -1
+    console.log('here');
+    console.log(matchdata);
+    while(!found && i < 10) {
+      //console.log("trying:" + matchdata.participantIdentities[i].player.summonerId);
+      if(matchdata.participantIdentities[i].player.summonerId == this.state.profile.summonerId){
+        participantid = i;
+        found = true;
+      }
+      i += 1;
+    }
+
+  
+    //console.log(matchdata.participants[participantid].stats)
+    let stats = matchdata.participants[participantid].stats;
+    let kills = stats.kills;
+    let deaths = stats.deaths;
+    let assists = stats.assists;
+    let cs = stats.totalMinionsKilled;
+    let cspm = cs/(matchtime/60);
+    let kda = (kills + assists) / deaths;
+    // console.log(kda);
+    // console.log(kills + " " + deaths + " " + assists);
+    // console.log(cspm);
+    // console.log(cs);
+    // console.log(matchtime);
+    //this.setState({stats: {kda: kda, cspm: cspm}});
+    return {kills: kills, deaths: deaths, assists: assists, cs: cs, matchtime: matchtime};
+
+    //let participantid = matchdata.participantIdentities
+  }
+
   handleChange(event) {
-    console.log("change", event.target.value)
     this.setState({query: event.target.value});
   }
 
@@ -111,10 +172,6 @@ class Profile extends React.Component {
     this.getRank();
     this.getRole();
     event.preventDefault();
-  }
-
-  handleEdit(event) {
-    this.setState({profile: {}, submitted: false});
   }
 
   setScore(score) {
@@ -165,7 +222,8 @@ class Profile extends React.Component {
                      {tier}
                   </Typography>
                   }
-                  {(tier != null && role != null && lp != null)?
+                  {console.log(this.state)}
+                  {(tier != null && role != null && lp != null && this.state.stats.cspm != null && this.state.stats.kda != null)?
                   <div>
                     <Score
                     name={summonerName}
@@ -176,14 +234,14 @@ class Profile extends React.Component {
                     losses="0"
                     pref={prefRole}
                     pref2={prefRole2}
+                    kda={this.state.stats.kda}
+                    cspm={this.state.stats.cspm}
                   />
                   <Typography variant="body2" color="textSecondary" component="p">
                    {/* mid: {role.MID} bot: {role.BOTTOM} supp: {role.SUPPORT} top: {role.TOP} jg: {role.JUNGLE} */}
                    Pref: {prefRole}, {prefRole2}
                   </Typography>
                   
-                  {/* <Button onClick={console.log(this.state.score)}>yo</Button>
-                  {console.log('z',this.state.score)} */}
                   </div>
                   
                   : <CircularProgress />
@@ -192,11 +250,7 @@ class Profile extends React.Component {
                   </Grid>
                   
                   <Grid item xs={12} sm={2}>
-                    <div style={closeStyle}>
-                    <Button style={{ "minHeight": "100px", "maxWidth": "50px"}} color="primary" onClick={this.handleEdit}>
-                      <Edit/>
-                    </Button>
-                    </div>
+                    
                   </Grid>
                 </Grid>
               </div>

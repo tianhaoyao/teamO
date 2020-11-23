@@ -4,7 +4,6 @@ class Icons extends React.Component {
 
     constructor(props){
         super(props);
-        console.log(this.props);
         this.state={
             tier: this.props.tier,
             division: this.props.division,

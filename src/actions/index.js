@@ -8,6 +8,14 @@ export const updatePlayer = (player, score, pref, pref2) => {
     }
 }
 
+export const deletePlayer = (player) => {
+    return {
+        type: 'DELETE',
+        payloadPlayer: player
+    }
+    
+}
+
 export const updateTeam = (team) => {
     return {
         type: 'REFRESHTEAM',

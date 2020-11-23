@@ -61,7 +61,6 @@ function Sort() {
             }
             
         }
-        //console.log("calculated score:" + s + "for team" + team);
         return s;
     }
 
@@ -70,37 +69,28 @@ function Sort() {
     }
 
     function swap(pos) {
-        //console.log("SWAPPING")
+
         let temp = team[0][pos];
         team[0][pos] = team[1][pos];
         team[1][pos] = temp;
-        //console.log("SWAPPED", team[0], team[1])
     }
 
     function adjust() {
         let currDiff = calculateDiff();
         for(let i = 0; i < team[0].length; i++) {
             if (!(team[0][i] == "-" && team[1][i] == "-")){
-                //console.log("current team diff: " + calculateDiff() + ", swapping pos" + i);
+
                 swap(i);
                 if(calculateDiff() >= currDiff) {
-                    //console.log("swapping back because worse team diff: " + calculateDiff() + "vs" + currDiff);
                     swap(i);
                 }
                 else {
                     currDiff = calculateDiff();
-                    //console.log("swapping because better team diff: " + calculateDiff());
                 }
                 teamScore[0] = calculateTeamScore(team[0]);
                 
                 teamScore[1] = calculateTeamScore(team[1]);
-                //console.log(teamScore);
             }
-            else{
-                //console.log("blank", team1[i], team2[i], i)
-                //console.log(!(team1[i] == "-" && team2[i] == "-"))
-            }
-            
             
         }
         
@@ -136,7 +126,6 @@ function Sort() {
 
         
         sortedArray = scoresArray.sort(compare);
-        console.log("sorted:" + sortedArray);
         let slots1 = [];
         let slots2 = [];
         
@@ -144,56 +133,16 @@ function Sort() {
         for(let i = 0; i < sortedArray.length; i++) {
             if(team[0][lookupPosition(sortedArray[i][2])] == '-') {
                 team[0][lookupPosition(sortedArray[i][2])] = sortedArray[i];
-                
-                //console.log(sortedArray[i][0], "filled team 1 by rank");
             }
             else if(team[1][lookupPosition(sortedArray[i][2])] == '-') {
                 team[1][lookupPosition(sortedArray[i][2])] = sortedArray[i];
-                
-                //console.log(sortedArray[i][0], "filled team 2 by rank");
             }
             else {
-                // // find empty spots, randomly seed
-                // slots1 = getRemainingSpots(team1);
-                // slots2 = getRemainingSpots(team2);
-
-
-                // if(slots1.length > slots2.length) {
-                //     console.log("emptyspots1:", slots1, "emptySpot2", slots2, "choosing put in 1");
-                //     // [1,3,4] (jg adc supp)
-                //     let spot = Math.floor(Math.random() * slots1.length);
-                //     // spot = 1
-                //     let randomPosition = slots1[spot];
-                //     // randomPosition = 3 (adc)
-                //     team1[randomPosition] = sortedArray[i];
-                //     console.log(sortedArray[i][0] + "filled team 1 by overflow in position" + randomPosition + ', here is empty spots left:' + slots1);
-                // }
-                // else if(slots1.length <= slots2.length) {
-                //     console.log("emptyspots1:", slots1, "emptySpot2", slots2, "choosing put in 2");
-                //     // [1,3,4] (jg adc supp)
-                //     let spot = Math.floor(Math.random() * slots2.length);
-                //     // spot = 1
-                //     let randomPosition = slots2[spot];
-                //     // randomPosition = 3 (adc)
-                //     team2[randomPosition] = sortedArray[i];
-                //     console.log(sortedArray[i][0] + "filled team 2 by overflow in position" + randomPosition + ', here is empty spots left:' + slots2);
-                // }
-                // else{
-                //     console.log("too many players?");
-                // }
-
-
-
-                // set aside player for later
-
-                
                 extras.push(sortedArray[i]);
             }
 
-            console.log("EXTRAS!!", extras);
             extraSlots = getRemainingSpotsForBoth();
-            console.log("EXTRASLOTS!!", extraSlots);
-            console.log("AFTER INITIAL:", team);
+
         }
 
         
@@ -207,53 +156,29 @@ function Sort() {
 
             if(team[0][lookupPosition(extras[i][3])] == '-') {
                 team[0][lookupPosition(extras[i][3])] = extras[i];
-                
-                console.log(extras[i][0], "filled team 1 by SECONDARY");
             }
             else if(team[1][lookupPosition(extras[i][3])] == '-') {
                 team[1][lookupPosition(extras[i][3])] = extras[i];
-                
-                console.log(extras[i][0], "filled team 2 by SECONDARY");
             }
 
             // FILL BY RANDOM
 
             else{
                 if(slots1.length > slots2.length) {
-                    //console.log("emptyspots1:", slots1, "emptySpot2", slots2, "choosing put in 1");
-                    // [1,3,4] (jg adc supp)
                     let spot = Math.floor(Math.random() * slots1.length);
-                    // spot = 1
                     let randomPosition = slots1[spot];
-                    // randomPosition = 3 (adc)
                     team[0][randomPosition] = extras[i];
-                    //console.log(extras[i][0], "filled team 1 by overflow in position", randomPosition + ', here is empty spots left:' + slots1);
                 }
                 else if(slots1.length <= slots2.length) {
-                    //console.log("emptyspots1:", slots1, "emptySpot2", slots2, "choosing put in 2");
-                    // [1,3,4] (jg adc supp)
                     let spot = Math.floor(Math.random() * slots2.length);
-                    // spot = 1
                     let randomPosition = slots2[spot];
-                    // randomPosition = 3 (adc)
                     team[1][randomPosition] = extras[i];
-                    //console.log(extras[i][0], "filled team 2 by overflow in position", randomPosition + ', here is empty spots left:' + slots2);
                 }
             }
-
-
-            
-            
-
-                
-            
-
 
         }
 
         adjust();
-        console.log("FINAL TEAMS:", team[0], team[1]);
-        console.log("FINAL SCORES:", teamScore[0], teamScore[1]);
         dispatch(updateTeam(team));
         dispatch(updateTotal(teamScore));
 
@@ -263,25 +188,7 @@ function Sort() {
 
     return(
         <div>
-
-            {/* <Grid container spacing={3}>
-            
-            <Grid item xs={12} sm={6}>
-                <Typography gutterBottom variant="h5" component="h2">
-                  Score: {teamScoresArray[0]}
-                </Typography>
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                
-                <Typography gutterBottom variant="h5" component="h2">
-                  Score: {teamScoresArray[1]}
-                </Typography>
-                
-              </Grid>
-            </Grid> */}
-                        {sortTeam()}
-            
+            {sortTeam()}
         </div>
     );
 }

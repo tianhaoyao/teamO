@@ -8,6 +8,7 @@ import Profile from './Profile';
 import Sort from './Sort';
 import Results from './Results';
 import TotalScore from './TotalScore';
+import Show from './Show';
 
 import {useSelector} from 'react-redux';
 import scoreReducer from './reducers/scoreCollection';
@@ -20,22 +21,18 @@ function App(){
   
 
  
-   const scores = useSelector(state => state.scoreReducer);
+   //const scores = useSelector(state => state.scoreReducer);
    
    
-   let show = false;
-
-   function change(){
-     show = !show;
-   }
+   const [showScores, setShowScores] = React.useState(false);
+   const onClick = () => setShowScores(!showScores);
 
     return (
       <div className="App">
+        
         <Container maxWidth="md"> 
           
           <img src={logo}></img>
-
-          <p>SCORES {scores}</p>
 
           <Divider />
           <Grid container spacing={3}>
@@ -79,97 +76,29 @@ function App(){
           <Grid item xs={12} sm={6}>
             <Profile/>
           </Grid>
+
+          <Grid item xs={12} sm={12}>
+          
+          </Grid>
+         
         </Grid>
 
-           
-            <Sort></Sort>
-            {/* <Button>Show me the teams</Button> */}
+        
 
-            <TotalScore/>
+        
 
-            <Grid container spacing={3}>
-
-              
-            
-              <Grid item xs={12} sm={6}>
-                <Results
-                  team="0"
-                  pos="0"
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <Results
-                  team="1"
-                  pos="0"
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <Results
-                  team="0"
-                  pos="1"
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <Results
-                  team="1"
-                  pos="1"
-                />
-              </Grid>
-
-
-              <Grid item xs={12} sm={6}>
-                <Results
-                  team="0"
-                  pos="2"
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <Results
-                  team="1"
-                  pos="2"
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <Results
-                  team="0"
-                  pos="3"
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <Results
-                  team="1"
-                  pos="3"
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <Results
-                  team="0"
-                  pos="4"
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <Results
-                  team="1"
-                  pos="4"
-                />
-              </Grid>
-
-            </Grid>
-
-          
         </Container>
         
-  
+
         
-  
+        <Show/>
+        {/* <Container maxWidth="md"> 
+          {showScores ? 
+          <Button onClick={onClick}>Back</Button> 
+          : 
+          <Button onClick={onClick}>Show me the teams!</Button>}
+          
+        </Container> */}
         
         
       </div>
