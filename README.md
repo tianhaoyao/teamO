@@ -1,9 +1,9 @@
 
-## TeamO
+# TeamO
 
 React Webapp that divides summoners into even teams. Frontend using Material-UI. Made with Riot-API. Uses Redux to keep states for players.
 
-# Calculating Summoner Score
+## Calculating Summoner Score
 
 Summoner Score = rank + (lp * multiplier) + bonus
 
@@ -49,7 +49,7 @@ KDA Bonus = ((2420 + ((-1600) / (1 + ((KDA / 2.5)^0.2)) * 3 ))) * KDA Multiplier
 
 CS Bonus = 8 * ((CS/min) - 5)^3 * CS Multiplier
 
-# Matchmaking Algorithm
+## Matchmaking Algorithm
 
 Models constraint satisfaction problems (CSP).
 
@@ -58,7 +58,7 @@ Models constraint satisfaction problems (CSP).
 3. The fillers are given a random open position (prioritizing the current score of both teams, whichever is less)
 4. From top lane downwards, the players are swapped between the two teams. If the score difference decreases, the players remain in their new teams. Otherwise, keep the original arrangement.
 
-# Running the Program
+## Running the Program
 
 ```
 $ git clone https://github.com/tianhaoyao/teamO.git
