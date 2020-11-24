@@ -47,7 +47,7 @@ Bonus = csBonus + kdaBonus
 
 KDA Bonus = ((2420 + ((-1600) / (1 + ((KDA / 2.5)^0.2)) * 3 ))) * KDA Multiplier
 
-CS Bonus = 8 * Math.pow(((CS/min) - 5), 3) * CS Multiplier
+CS Bonus = 8 * ((CS/min) - 5)^3 * CS Multiplier
 
 # Matchmaking Algorithm
 
