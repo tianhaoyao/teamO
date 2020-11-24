@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
-import Typography from '@material-ui/core/Typography';
 import {update, updateTeam, updateTotal} from './actions';
-import {Container, Grid, Divider, Button} from '@material-ui/core'
 
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
@@ -53,9 +50,9 @@ function Sort() {
     function calculateTeamScore(team) {
         let s = 0;
         for(let i = 0; i < team.length; i++) {
-            if(team[i] != '-') {
+            if(team[i] !== '-') {
                 s += team[i][1];
-                if(lookupPosition(team[i][2]) == i) {
+                if(lookupPosition(team[i][2]) === i) {
                     s += 100;
             }
             }
@@ -78,7 +75,7 @@ function Sort() {
     function adjust() {
         let currDiff = calculateDiff();
         for(let i = 0; i < team[0].length; i++) {
-            if (!(team[0][i] == "-" && team[1][i] == "-")){
+            if (!(team[0][i] === "-" && team[1][i] === "-")){
 
                 swap(i);
                 if(calculateDiff() >= currDiff) {
@@ -99,7 +96,7 @@ function Sort() {
     function getRemainingSpots(team) {
         let slots = []
         for (let i = 0; i < team.length; i++) {
-            if(team[i] == "-") {
+            if(team[i] === "-") {
                 slots.push(i);
             }
         }
@@ -109,12 +106,12 @@ function Sort() {
     function getRemainingSpotsForBoth() {
         let slots = [[],[]]
         for (let i = 0; i < team[0].length; i++) {
-            if(team[0][i] == "-") {
+            if(team[0][i] === "-") {
                 slots[0].push(i);
             }
         }
         for (let i = 0; i < team[1].length; i++) {
-            if(team[1][i] == "-") {
+            if(team[1][i] === "-") {
                 slots[1].push(i);
             }
         }
@@ -131,10 +128,10 @@ function Sort() {
         
 
         for(let i = 0; i < sortedArray.length; i++) {
-            if(team[0][lookupPosition(sortedArray[i][2])] == '-') {
+            if(team[0][lookupPosition(sortedArray[i][2])] === '-') {
                 team[0][lookupPosition(sortedArray[i][2])] = sortedArray[i];
             }
-            else if(team[1][lookupPosition(sortedArray[i][2])] == '-') {
+            else if(team[1][lookupPosition(sortedArray[i][2])] === '-') {
                 team[1][lookupPosition(sortedArray[i][2])] = sortedArray[i];
             }
             else {
@@ -154,10 +151,10 @@ function Sort() {
 
             // FILL BY SECONDARY
 
-            if(team[0][lookupPosition(extras[i][3])] == '-') {
+            if(team[0][lookupPosition(extras[i][3])] === '-') {
                 team[0][lookupPosition(extras[i][3])] = extras[i];
             }
-            else if(team[1][lookupPosition(extras[i][3])] == '-') {
+            else if(team[1][lookupPosition(extras[i][3])] === '-') {
                 team[1][lookupPosition(extras[i][3])] = extras[i];
             }
 

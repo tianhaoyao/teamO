@@ -1,10 +1,12 @@
-export const updatePlayer = (player, score, pref, pref2) => {
+export const updatePlayer = (player, score, pref, pref2, tier, division) => {
     return {
         type: 'UPDATE',
         payloadPlayer: player,
         payloadScore: score,
         payloadPref: pref,
-        payloadPref2: pref2
+        payloadPref2: pref2,
+        payloadTier: tier,
+        payloadDivision: division
     }
 }
 

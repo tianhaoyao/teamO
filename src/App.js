@@ -2,19 +2,14 @@ import React from 'react';
 import logo from './teamo.png'
 import ReactDOM from 'react-dom';
 
-import {Container, Grid, Divider, Button, Card, Typography} from '@material-ui/core'
+import {Container, Grid, Divider} from '@material-ui/core'
 
 import Profile from './Profile';
-import Sort from './Sort';
-import Results from './Results';
-import TotalScore from './TotalScore';
 import Show from './Show';
 
 import {useSelector} from 'react-redux';
 import scoreReducer from './reducers/scoreCollection';
 import teamReducer from './reducers/teamReducer';
-
-import { findAllByDisplayValue } from '@testing-library/react';
 
 
 function App(){
@@ -83,23 +78,9 @@ function App(){
          
         </Grid>
 
-        
-
-        
-
         </Container>
         
-
-        
         <Show/>
-        {/* <Container maxWidth="md"> 
-          {showScores ? 
-          <Button onClick={onClick}>Back</Button> 
-          : 
-          <Button onClick={onClick}>Show me the teams!</Button>}
-          
-        </Container> */}
-        
         
       </div>
     );

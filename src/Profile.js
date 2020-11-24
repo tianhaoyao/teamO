@@ -1,16 +1,14 @@
 import React from 'react';
-import logo from './teamo.png'
 import ReactDOM from 'react-dom';
 import Button from '@material-ui/core/Button';
 
 import {Grid, Card, CardActionArea, CardContent, Typography, TextField, CircularProgress} from '@material-ui/core'
-import {Edit} from '@material-ui/icons';
 
 import Score from './Score';
 import Icons from './Icons';
 
 
-const NUM_RECENT_MATCH = 10;
+const NUM_RECENT_MATCH = 5;
 const API_KEY = process.env.REACT_APP_TEAMO_API_KEY;
 const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
@@ -46,7 +44,7 @@ class Profile extends React.Component {
     let data3;
     let i;
     for(i = 0; i < data.length; i++) {
-      if (data[i].queueType.localeCompare('RANKED_SOLO_5x5') == 0) {
+      if (data[i].queueType.localeCompare('RANKED_SOLO_5x5') === 0) {
         data3 = data[i];
 
       }
@@ -65,9 +63,20 @@ class Profile extends React.Component {
   getRole = async () => {
 
     let id = await this.getProfile();
-    const url = `https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${id.accountId}?queue=420&api_key=${API_KEY}`;
-    const response = await fetch(proxyurl + url);
-    const data = await response.json();
+    let url = `https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${id.accountId}?queue=420&api_key=${API_KEY}`;
+
+    // if summoner is unranked, look at normal games
+    
+    
+    let response = await fetch(proxyurl + url);
+    let data = await response.json();
+
+    if(data.matches == null){
+      console.log("couldnt find ranked");
+      url = `https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${id.accountId}?queue=400&api_key=${API_KEY}`;
+      response = await fetch(proxyurl + url);
+      data = await response.json();
+    }
 
     let i;
     let matchdata = [];
@@ -80,6 +89,7 @@ class Profile extends React.Component {
     let rankedCount = {"MID":0, "TOP":0, "SUPPORT":0, "BOTTOM":0, "JUNGLE":0};
     if(data.matches != null){
       for(i = 0; i < data.matches.length; i++) {
+        console.log(data.matches[i]);
         if(i <= NUM_RECENT_MATCH){
           currentmatch = await this.getMatchStats(data.matches[i]);
           kills += currentmatch.kills;
@@ -90,19 +100,19 @@ class Profile extends React.Component {
           matchdata.push(currentmatch);
 
         }
-        if (data.matches[i].lane.localeCompare('MID') == 0) {
+        if (data.matches[i].lane.localeCompare('MID') === 0) {
           rankedCount["MID"] += 1;
         }
-        else if (data.matches[i].lane.localeCompare('JUNGLE') == 0) {
+        else if (data.matches[i].lane.localeCompare('JUNGLE') === 0) {
           rankedCount["JUNGLE"] += 1;
         }
-        else if (data.matches[i].lane.localeCompare('BOTTOM') == 0 && data.matches[i].role.localeCompare("DUO_CARRY") == 0) {
+        else if (data.matches[i].lane.localeCompare('BOTTOM') === 0 && data.matches[i].role.localeCompare("DUO_CARRY") === 0) {
           rankedCount["BOTTOM"] += 1;
         }
-        else if (data.matches[i].lane.localeCompare('BOTTOM') == 0 && data.matches[i].role.localeCompare("DUO_SUPPORT") == 0) {
+        else if (data.matches[i].lane.localeCompare('BOTTOM') === 0 && data.matches[i].role.localeCompare("DUO_SUPPORT") === 0) {
           rankedCount["SUPPORT"] += 1;
         }
-        else if (data.matches[i].lane.localeCompare('TOP') == 0) {
+        else if (data.matches[i].lane.localeCompare('TOP') === 0) {
           rankedCount["TOP"] += 1;
         }
       }
@@ -110,9 +120,7 @@ class Profile extends React.Component {
     }
     let kda = (kills + assists) / deaths;
     let cspm = cs/matchtime*60;
-    console.log("YO", cspm)
     this.setState({stats: {kda: kda, cspm: cspm}});
-    console.log(this.state)
     let firstPref = Object.keys(rankedCount).reduce((a, b) => rankedCount[a] > rankedCount[b] ? a : b)
     this.setState({prefRole: firstPref});
     let temp = rankedCount;
@@ -132,15 +140,18 @@ class Profile extends React.Component {
     let found = false;
     let i = 0;
     let participantid = -1
-    console.log('here');
-    console.log(matchdata);
     while(!found && i < 10) {
-      //console.log("trying:" + matchdata.participantIdentities[i].player.summonerId);
-      if(matchdata.participantIdentities[i].player.summonerId == this.state.profile.summonerId){
-        participantid = i;
-        found = true;
+      try{
+        //console.log("trying:" + matchdata.participantIdentities[i].player.summonerId);
+        if(matchdata.participantIdentities[i].player.summonerId === this.state.profile.summonerId){
+          participantid = i;
+          found = true;
+        }
+        i += 1;
       }
-      i += 1;
+      catch(err) {
+        console.log(err);
+      }
     }
 
   
@@ -159,8 +170,6 @@ class Profile extends React.Component {
     // console.log(matchtime);
     //this.setState({stats: {kda: kda, cspm: cspm}});
     return {kills: kills, deaths: deaths, assists: assists, cs: cs, matchtime: matchtime};
-
-    //let participantid = matchdata.participantIdentities
   }
 
   handleChange(event) {
@@ -186,6 +195,8 @@ class Profile extends React.Component {
     const lp = this.state.profile.leaguePoints;
     const prefRole = this.state.prefRole;
     const prefRole2 = this.state.prefRole2;
+    const cspm = this.state.stats.cspm;
+    const kda = this.state.stats.kda;
     const closeStyle = {
       height: "100%",
 
@@ -213,7 +224,7 @@ class Profile extends React.Component {
                   {summonerName}
                   </Typography> 
 
-                  {(tier!="UNRANKED") ?
+                  {(tier!=="UNRANKED") ?
                   <Typography variant="body2" color="textSecondary" component="p">
                      {tier} {division}
                   </Typography>
@@ -222,8 +233,7 @@ class Profile extends React.Component {
                      {tier}
                   </Typography>
                   }
-                  {console.log(this.state)}
-                  {(tier != null && role != null && lp != null && this.state.stats.cspm != null && this.state.stats.kda != null)?
+                  {(tier != null && role != null && lp != null && cspm != null && kda != null)?
                   <div>
                     <Score
                     name={summonerName}
@@ -234,8 +244,8 @@ class Profile extends React.Component {
                     losses="0"
                     pref={prefRole}
                     pref2={prefRole2}
-                    kda={this.state.stats.kda}
-                    cspm={this.state.stats.cspm}
+                    kda={kda}
+                    cspm={cspm}
                   />
                   <Typography variant="body2" color="textSecondary" component="p">
                    {/* mid: {role.MID} bot: {role.BOTTOM} supp: {role.SUPPORT} top: {role.TOP} jg: {role.JUNGLE} */}

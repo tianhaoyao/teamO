@@ -13,11 +13,7 @@ class Icons extends React.Component {
 
     componentDidMount(){
         this.calculate();
-        
     }
-
-    
-
 
     calculate = async() => {
 
@@ -26,16 +22,12 @@ class Icons extends React.Component {
                           "II": 2,
                            "I": 1
         }
-        if(this.state.tier == "UNRANKED") {
+        if(this.state.tier === "UNRANKED") {
             this.setState({imageUrl: `//opgg-static.akamaized.net/images/medals/default.png?image=q_auto&v=1`})
         }
         else{
             this.setState({imageUrl: `//opgg-static.akamaized.net/images/medals/${this.state.tier}_${divisionLookup[this.state.division]}.png?image=q_auto&v=1`})
         }
-        
-        
-        
-
     }
     
     render(){

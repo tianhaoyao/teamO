@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Typography from '@material-ui/core/Typography';
 import { updatePlayer } from './actions';
 import { useDispatch } from 'react-redux';
+import * as rankData from './settings/ranks.json';
 
 function Score(props) {
 
@@ -21,51 +22,28 @@ function Score(props) {
 
 
     function calculate() {
-        let lookup = {
-            "IRON": 300,
-            "BRONZE": 700,
-            "SILVER": 1200,
-            "GOLD": 1800,
-            "PLATINUM": 2200,
-            "DIAMOND": 2600,
-            "MASTER": 3000,
-            "GRANDMASTER": 3300,
-            "CHALLENGER": 3500,
-            "UNRANKED": 1000
-        }
-        let divisionLookup = {}
-
-        if (lookup[props.tier] >= lookup["PLATINUM"]) {
-            divisionLookup = {
-                "IV": 0,
-                "III": 200,
-                "II": 400,
-                "I": 600
-            }
-
-        } else {
-            divisionLookup = {
-                "IV": 0,
-                "III": 100,
-                "II": 200,
-                "I": 300
-            }
-
-        }
+        console.log(props.tier);
+        console.log(props.division);
         let name = props.name;
-        console.log("got cs" + props.cspm);
-        console.log("got kda" + props.kda);
-        let s = lookup[props.tier] + divisionLookup[props.division] + props.lp + bonus();
+        
+        let baseScore = rankData.rankScore[props.tier][props.division];
+        let lpScore = props.lp * rankData.lpMultiplier[props.tier];
+
+        if(props.tier === "MASTER" || props.tier === "GRANDMASTER" || props.tier === "CHALLENGER") {
+            lpScore = Math.pow(lpScore, 1.07);
+        }
+
+        let finalScore = Math.round(baseScore + lpScore + bonus());
         let pref = props.pref;
         let pref2 = props.pref2;
         setName(name);
-        setScore(s);
+        setScore(finalScore);
         setPref(pref);
         setPref2(pref2);
 
-        dispatch(updatePlayer(name, s, pref, pref2));
+        dispatch(updatePlayer(name, finalScore, pref, pref2, props.tier, props.division));
 
-        return lookup[props.tier] + divisionLookup[props.division] + props.lp;
+        return finalScore;
 
 
 
@@ -75,23 +53,24 @@ function Score(props) {
         let bonus = 0;
         let csbonus = 0;
         // cs
-        console.log(props.cspm);
-        if (props.pref != "SUPPORT" && props.pref != "JUNGLE") {
-            csbonus = Math.round(5 * Math.pow((props.cspm - 5), 3));
+        if (props.pref !== "SUPPORT" && props.pref !== "JUNGLE") {
+            // 8\cdot\left(x-5\right)^{3}
+            csbonus = 8 * Math.pow((props.cspm - 5), 3);
             bonus += csbonus;
         }
 
         // kda
-        let multiplier = 0.3;
+        let multiplier = 0.6;
         
-        if (props.pref == "SUPPORT") {
+        if (props.pref === "SUPPORT") {
             multiplier = 1;
-        } else if (props.pref == "JUNGLE") {
+        } else if (props.pref === "JUNGLE") {
             multiplier = 0.8;
         }
 
-        
-        let kdabonus = Math.round((879.99430 + (-381.7352 - 679.99430) / (1 + Math.pow((props.kda / 19.458590), 0.7643032))) * multiplier);
+        // 2420+\left(\frac{-1600}{1+\left(\frac{x}{2.5}^{0.2}\right)}\right)\cdot3
+        let kdabonus = ((2420 + ((-1600) / (1 + Math.pow((props.kda / 2.5), 0.2)) * 3 ))) * multiplier;
+
         if(Number.isNaN(csbonus)) {
             csbonus = 0;
         }
@@ -100,22 +79,16 @@ function Score(props) {
         }
 
 
-        bonus += kdabonus;
-        console.log(props.kda)
-        console.log("kdabonus" + kdabonus);
-        console.log("csbonus" + csbonus);
+        bonus = bonus + kdabonus;
+        console.log("kdabonus for " + props.kda + ": " + kdabonus);
+        console.log("csbonus for " + props.cspm + ": " + csbonus);
         
         return bonus;
     }
 
 
-    return ( <
-        div >
-        <
-        Typography variant = "body2"
-        color = "textSecondary"
-        component = "p" > Score: { score } < /Typography> <
-        /div>
+    return ( 
+        <div> <Typography variant="body2" color="textSecondary" component="p"> Score: {score} </Typography> </div>
     );
 
 
