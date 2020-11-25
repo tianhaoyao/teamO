@@ -30,6 +30,8 @@ class Profile extends React.Component {
     const response = await fetch(proxyurl + url);
 
     const data = await response.json();
+
+    this.setState({profile: {summonerName: data.name}});
     console.log("fetched");
     return data;
 
@@ -52,7 +54,15 @@ class Profile extends React.Component {
 
     // UNRANKED
     if(data3 == null) {
-      this.setState({profile: {summonerName: this.state.query, tier: 'UNRANKED', rank: 'IV', leaguePoints: 0, summonerId: id.id}});
+      this.setState(prevState => ({
+        profile: {
+            ...prevState.profile,
+            tier: 'UNRANKED', 
+            rank: 'IV', 
+            leaguePoints: 0, 
+            summonerId: id.id
+        }
+      }));
     }
     else {
       this.setState({profile: data3});
@@ -89,7 +99,7 @@ class Profile extends React.Component {
     let rankedCount = {"MID":0, "TOP":0, "SUPPORT":0, "BOTTOM":0, "JUNGLE":0};
     if(data.matches != null){
       for(i = 0; i < data.matches.length; i++) {
-        console.log(data.matches[i]);
+        
         if(i <= NUM_RECENT_MATCH){
           currentmatch = await this.getMatchStats(data.matches[i]);
           kills += currentmatch.kills;
@@ -210,7 +220,7 @@ class Profile extends React.Component {
               <div>
                 <Grid container spacing={3} alignItems="center">
                 <Grid item xs={12} sm={3}>
-                    {(tier != null && role != null)?
+                    {(tier != null && division != null)?
                     <Icons 
                       tier={tier}
                       division={division}>

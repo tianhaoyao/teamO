@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from './teamo.png'
+import logo from './resources/teamo.png'
 import ReactDOM from 'react-dom';
 
 import {Container, Grid, Divider} from '@material-ui/core'
@@ -26,8 +26,9 @@ function App(){
       <div className="App">
         
         <Container maxWidth="md"> 
-          
-          <img src={logo}></img>
+          <Grid container item xs={12} justify="center">
+            <img src={logo}></img>
+          </Grid>
 
           <Divider />
           <Grid container spacing={3}>

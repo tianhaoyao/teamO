@@ -22,8 +22,6 @@ function Score(props) {
 
 
     function calculate() {
-        console.log(props.tier);
-        console.log(props.division);
         let name = props.name;
         
         let baseScore = rankData.rankScore[props.tier][props.division];
