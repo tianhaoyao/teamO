@@ -95,6 +95,9 @@ class Profile extends React.Component {
     let assists = 0;
     let cs = 0;
     let matchtime = 0;
+    let kpS = 0;
+    let dmgS = 0;
+    let goldS = 0;
     let currentmatch;
     let rankedCount = {"MID":0, "TOP":0, "SUPPORT":0, "BOTTOM":0, "JUNGLE":0};
     if(data.matches != null){
@@ -107,6 +110,9 @@ class Profile extends React.Component {
           assists += currentmatch.assists;
           cs += currentmatch.cs;
           matchtime += currentmatch.matchtime;
+          kpS += currentmatch.compareKP;
+          dmgS += currentmatch.damageShare;
+          goldS += currentmatch.goldShare;
           matchdata.push(currentmatch);
 
         }
@@ -128,9 +134,15 @@ class Profile extends React.Component {
       }
 
     }
+
+    kpS /= NUM_RECENT_MATCH;
+    goldS /= NUM_RECENT_MATCH;
+    dmgS /= NUM_RECENT_MATCH;
+
+
     let kda = (kills + assists) / deaths;
     let cspm = cs/matchtime*60;
-    this.setState({stats: {kda: kda, cspm: cspm}});
+    this.setState({stats: {kda: kda, cspm: cspm, kpS: kpS, goldS: goldS, dmgS: dmgS}});
     let firstPref = Object.keys(rankedCount).reduce((a, b) => rankedCount[a] > rankedCount[b] ? a : b)
     this.setState({prefRole: firstPref});
     let temp = rankedCount;
@@ -145,41 +157,100 @@ class Profile extends React.Component {
     const matchurl = `https://na1.api.riotgames.com/lol/match/v4/matches/${match.gameId}?api_key=${API_KEY}`;
     const matchresponse = await fetch(proxyurl + matchurl);
     const matchdata = await matchresponse.json();
+    console.log(matchdata);
 
     let matchtime = matchdata.gameDuration;
-    let found = false;
     let i = 0;
-    let participantid = -1
-    while(!found && i < 10) {
+    let participantid = -1;
+    let teamid = -1;
+    let team100 = [];
+    let team200 = [];
+    let friendlyteam = []
+    for(let i = 0; i < 10; i++) {
       try{
         //console.log("trying:" + matchdata.participantIdentities[i].player.summonerId);
         if(matchdata.participantIdentities[i].player.summonerId === this.state.profile.summonerId){
           participantid = i;
-          found = true;
+          teamid = matchdata.participants[i].teamId;
         }
-        i += 1;
+        if(matchdata.participants[i].teamId == 100) {
+          team100.push(matchdata.participants[i].stats);
+        }
+        else if(matchdata.participants[i].teamId == 200) {
+          team200.push(matchdata.participants[i].stats);
+        }
+
       }
       catch(err) {
         console.log(err);
       }
     }
 
+    if(teamid == 100) {
+      friendlyteam = team100;
+    }
+    else {
+      friendlyteam = team200;
+    }
+
+    for(let i = 0; i < friendlyteam.length; i++) {
+      console.log(i);
+      console.log(friendlyteam[i])
+    }
+
   
     //console.log(matchdata.participants[participantid].stats)
-    let stats = matchdata.participants[participantid].stats;
+    let stats = {}
+    try {
+      stats = matchdata.participants[participantid].stats;
+    }
+    catch(err) {
+      console.log(err);
+    }
+
+    let teamstats = this.getTeamStats(stats, friendlyteam);
+    console.log(teamstats);
+
     let kills = stats.kills;
     let deaths = stats.deaths;
     let assists = stats.assists;
     let cs = stats.totalMinionsKilled;
-    let cspm = cs/(matchtime/60);
-    let kda = (kills + assists) / deaths;
+
     // console.log(kda);
     // console.log(kills + " " + deaths + " " + assists);
     // console.log(cspm);
     // console.log(cs);
     // console.log(matchtime);
     //this.setState({stats: {kda: kda, cspm: cspm}});
-    return {kills: kills, deaths: deaths, assists: assists, cs: cs, matchtime: matchtime};
+    return Object.assign({kills: kills, deaths: deaths, assists: assists, cs: cs, matchtime: matchtime}, teamstats);
+  }
+
+  getTeamStats = (stats, friendlyteam) => {
+    let totalkills = 0;
+    let totalDamage = 0;
+    let totalDamageTurrets = 0;
+    let totalGold = 0;
+
+    for(let i = 0; i < friendlyteam.length; i++) {
+      totalkills += friendlyteam[i].kills;
+      totalDamage += friendlyteam[i].magicDamageDealtToChampions + friendlyteam[i].physicalDamageDealtToChampions + friendlyteam[i].trueDamageDealtToChampions;
+      totalDamageTurrets += friendlyteam[i].damageDealtToTurrets;
+      totalGold += friendlyteam[i].goldEarned;
+    }
+
+    let goldShare = stats.goldEarned / totalGold;
+    let damageShare = (stats.magicDamageDealtToChampions + stats.physicalDamageDealtToChampions + stats.trueDamageDealtToChampions)/totalDamage;
+    let compareKP = 0;
+    let totalKP = 0;
+
+    for(let i = 0; i < friendlyteam.length; i++) {
+      totalKP += (friendlyteam[i].kills + friendlyteam[i].assists)/totalkills;
+    }
+    
+    compareKP = ((stats.kills + stats.assists)/totalkills)/totalKP;
+    
+    return {goldShare: goldShare, compareKP: compareKP, damageShare: damageShare};
+    
   }
 
   handleChange(event) {
@@ -207,6 +278,9 @@ class Profile extends React.Component {
     const prefRole2 = this.state.prefRole2;
     const cspm = this.state.stats.cspm;
     const kda = this.state.stats.kda;
+    const goldS = this.state.stats.goldS;
+    const kpS = this.state.stats.kpS;
+    const dmgS = this.state.stats.dmgS;
     const closeStyle = {
       height: "100%",
 
@@ -256,6 +330,9 @@ class Profile extends React.Component {
                     pref2={prefRole2}
                     kda={kda}
                     cspm={cspm}
+                    kpS={kpS}
+                    goldS={goldS}
+                    dmgS={dmgS}
                   />
                   <Typography variant="body2" color="textSecondary" component="p">
                    {/* mid: {role.MID} bot: {role.BOTTOM} supp: {role.SUPPORT} top: {role.TOP} jg: {role.JUNGLE} */}

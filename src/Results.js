@@ -91,7 +91,12 @@ function Results(props){
                       </Typography>
                       }
                       <div>
-                        <Typography variant="body2" color="textSecondary" component="p"> Score: {teams[props.team][props.pos][1]} </Typography>
+                        <Typography variant="body2" color="textSecondary" component="p">
+                           Score: {teams[props.team][props.pos][1]}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary" component="p">
+                           "{teams[props.team][props.pos][6]}"
+                         </Typography>
                       <Typography variant="body2" color="textSecondary" component="p">
                        {/* mid: {role.MID} bot: {role.BOTTOM} supp: {role.SUPPORT} top: {role.TOP} jg: {role.JUNGLE} */}
                        Pref: {teams[props.team][props.pos][2]}, {teams[props.team][props.pos][3]}
