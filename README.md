@@ -35,19 +35,24 @@ Summoner Score = rank + (lp * multiplier) + bonus
 | Diamond I    | 3600       | 1.7           |
 | Master+      | 3900       | lp^1.07       |
 
-Bonus = csBonus + kdaBonus
+Bonus = csBonus + kdaBonus + kpBonus + goldBonus + dmgBonus
 
-|              | CS Multiplier | KDA Multiplier |
-|--------------|---------------|----------------|
-| Top          | 1             | 0.3            |
-| Jungle       | 0             | 0.8            |
-| Mid          | 1             | 0.3            |
-| Bottom       | 1             | 0.3            |
-| Support      | 0             | 1              |
+*Note: bonuses might be negative if stat is below threshold*
 
-KDA Bonus = ((2420 + ((-1600) / (1 + ((KDA / 2.5)^0.2)) * 3 ))) * KDA Multiplier
+### CS Bonus
+The more CS/minute you have, the higher score this awards. Junglers and Support unaffected.
 
-CS Bonus = 8 * ((CS/min) - 5)^3 * CS Multiplier
+### KDA Bonus
+The higher KDA, the higher score. More applicable for Jungle and Support.
+
+### KP Bonus
+Compares your Kill Participation score to your team. The higher KP compared to your team yields a better score. Junglers and Support are affected more, Top lane is affected less.
+
+### Gold Bonus
+Compares your gold earned relative to your team. The higher share the higher score. Support unaffected.
+
+### Damage Bonus
+Compares your damage done to enemy team relative to your team. The higher share the higher score. Jungler affected less, and Support even less.
 
 ## Matchmaking Algorithm
 
@@ -63,8 +68,7 @@ Models constraint satisfaction problems (CSP).
 ```
 $ git clone https://github.com/tianhaoyao/teamO.git
 $ cd teamO
-$ npm install @material-ui/core
-$ npm install react-redux
+$ yarn install
 $ yarn start
 ```
 RiotGames API key required in .env file
