@@ -91,7 +91,7 @@ function Score(props) {
     function getKPBonus() {
         let kpbonus = 0;
         let multiplier = 1;
-        if (props.pref == "SUPPORT" || props.pref == "JUNGLE") {
+        if (props.pref === "SUPPORT" || props.pref === "JUNGLE") {
             multiplier = 1.4;
         }
         else if (props.pref == "TOP") {
@@ -106,7 +106,7 @@ function Score(props) {
     function getGoldBonus() {
         let goldbonus = 0;
         let multiplier = 1;
-        if (props.pref == "SUPPORT") {
+        if (props.pref === "SUPPORT") {
             multiplier = 0;
         }
 
@@ -126,10 +126,10 @@ function Score(props) {
     function getDmgBonus() {
         let dmgbonus = 0;
         let multiplier = 1;
-        if (props.pref == "SUPPORT") {
+        if (props.pref === "SUPPORT") {
             multiplier = 0.2;
         }
-        else if (props.pref == "JUNGLE") {
+        else if (props.pref === "JUNGLE") {
             multiplier = 0.7;
         }
 
@@ -159,24 +159,26 @@ function Score(props) {
 
         if(worstAspect <= 0) {
 
-            if(worstAspect == csbonus) {
-                descriptor = "Zerojaw CS";
-            }
+            switch(worstAspect) {
+                case csbonus:
+                    descriptor = "Zerojaw CS";
+                    break;
 
-            else if(worstAspect == kdabonus) {
-                descriptor = "0/16/2 in 3 games";
-            }
+                case kdabonus:
+                    descriptor = "0/16/2 in 3 games";
+                    break;
     
-            else if(worstAspect == kpbonus) {
-                descriptor = "Quarantined in Lane";
-            }
+                case kpbonus:
+                    descriptor = "Quarantined in Lane";
+                    break;
             
-            else if(worstAspect == goldbonus) {
-                descriptor = "Lives in Poverty";
-            }
+                case goldbonus:
+                    descriptor = "Lives in Poverty";
+                    break;
 
-            else if(worstAspect == dmgbonus) {
-                descriptor = "Pacifist";
+                case dmgbonus: 
+                    descriptor = "Pacifist";
+                    break;
             }
             
         }

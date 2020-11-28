@@ -157,7 +157,6 @@ class Profile extends React.Component {
     const matchurl = `https://na1.api.riotgames.com/lol/match/v4/matches/${match.gameId}?api_key=${API_KEY}`;
     const matchresponse = await fetch(proxyurl + matchurl);
     const matchdata = await matchresponse.json();
-    console.log(matchdata);
 
     let matchtime = matchdata.gameDuration;
     let i = 0;
@@ -168,15 +167,14 @@ class Profile extends React.Component {
     let friendlyteam = []
     for(let i = 0; i < 10; i++) {
       try{
-        //console.log("trying:" + matchdata.participantIdentities[i].player.summonerId);
         if(matchdata.participantIdentities[i].player.summonerId === this.state.profile.summonerId){
           participantid = i;
           teamid = matchdata.participants[i].teamId;
         }
-        if(matchdata.participants[i].teamId == 100) {
+        if(matchdata.participants[i].teamId === 100) {
           team100.push(matchdata.participants[i].stats);
         }
-        else if(matchdata.participants[i].teamId == 200) {
+        else if(matchdata.participants[i].teamId === 200) {
           team200.push(matchdata.participants[i].stats);
         }
 
@@ -186,16 +184,11 @@ class Profile extends React.Component {
       }
     }
 
-    if(teamid == 100) {
+    if(teamid === 100) {
       friendlyteam = team100;
     }
     else {
       friendlyteam = team200;
-    }
-
-    for(let i = 0; i < friendlyteam.length; i++) {
-      console.log(i);
-      console.log(friendlyteam[i])
     }
 
   
@@ -209,7 +202,6 @@ class Profile extends React.Component {
     }
 
     let teamstats = this.getTeamStats(stats, friendlyteam);
-    console.log(teamstats);
 
     let kills = stats.kills;
     let deaths = stats.deaths;
