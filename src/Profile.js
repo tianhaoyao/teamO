@@ -7,10 +7,12 @@ import {Grid, Card, CardActionArea, CardContent, Typography, TextField, Circular
 import Score from './Score';
 import Icons from './Icons';
 
+import * as proxy from './proxy.json';
+
 
 const NUM_RECENT_MATCH = 5;
 const API_KEY = process.env.REACT_APP_TEAMO_API_KEY;
-const proxyurl = "https://cors-anywhere.herokuapp.com/";
+const proxyurl = proxy.proxy.addr;
 
 class Profile extends React.Component {
   constructor(props) {
@@ -25,10 +27,11 @@ class Profile extends React.Component {
 
 
   getProfile = async () => {
-    console.log("fetching");
+    
     const url = `https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${this.state.query}?api_key=${API_KEY}`;
+    console.log("fetching" + proxyurl + url);
     const response = await fetch(proxyurl + url);
-
+    console.log(response);
     const data = await response.json();
 
     this.setState({profile: {summonerName: data.name}});
@@ -99,7 +102,7 @@ class Profile extends React.Component {
     let dmgS = 0;
     let goldS = 0;
     let currentmatch;
-    let rankedCount = {"MID":0, "TOP":0, "SUPPORT":0, "BOTTOM":0, "JUNGLE":0};
+    let rankedCount = {"MID":0, "TOP":0, "SUPP":0, "BOT":0, "JG":0};
     if(data.matches != null){
       for(i = 0; i < data.matches.length; i++) {
         
@@ -120,13 +123,13 @@ class Profile extends React.Component {
           rankedCount["MID"] += 1;
         }
         else if (data.matches[i].lane.localeCompare('JUNGLE') === 0) {
-          rankedCount["JUNGLE"] += 1;
+          rankedCount["JG"] += 1;
         }
         else if (data.matches[i].lane.localeCompare('BOTTOM') === 0 && data.matches[i].role.localeCompare("DUO_CARRY") === 0) {
-          rankedCount["BOTTOM"] += 1;
+          rankedCount["BOT"] += 1;
         }
         else if (data.matches[i].lane.localeCompare('BOTTOM') === 0 && data.matches[i].role.localeCompare("DUO_SUPPORT") === 0) {
-          rankedCount["SUPPORT"] += 1;
+          rankedCount["SUPP"] += 1;
         }
         else if (data.matches[i].lane.localeCompare('TOP') === 0) {
           rankedCount["TOP"] += 1;
@@ -294,22 +297,10 @@ class Profile extends React.Component {
                     :
                     <br></br>
                     }
-                  </Grid>
-                  <Grid item xs={12} sm={7}>
-                  <Typography gutterBottom variant="h5" component="h2">
-                  {summonerName}
-                  </Typography> 
-
-                  {(tier!=="UNRANKED") ?
-                  <Typography variant="body2" color="textSecondary" component="p">
-                     {tier} {division}
-                  </Typography>
-                  :
-                  <Typography variant="body2" color="textSecondary" component="p">
-                     {tier}
-                  </Typography>
-                  }
-                  {(tier != null && role != null && lp != null && cspm != null && kda != null)?
+                </Grid>
+                <Grid item xs={12} sm={9}>
+                  
+                  {(summonerName != null && tier != null && role != null && lp != null && cspm != null && kda != null)?
                   <div>
                     <Score
                     name={summonerName}
@@ -326,10 +317,7 @@ class Profile extends React.Component {
                     goldS={goldS}
                     dmgS={dmgS}
                   />
-                  <Typography variant="body2" color="textSecondary" component="p">
-                   {/* mid: {role.MID} bot: {role.BOTTOM} supp: {role.SUPPORT} top: {role.TOP} jg: {role.JUNGLE} */}
-                   Pref: {prefRole}, {prefRole2}
-                  </Typography>
+                  
                   
                   </div>
                   
@@ -338,9 +326,9 @@ class Profile extends React.Component {
                   
                   </Grid>
                   
-                  <Grid item xs={12} sm={2}>
+                  {/* <Grid item xs={12} sm={2}>
                     
-                  </Grid>
+                  </Grid> */}
                 </Grid>
               </div>
               
