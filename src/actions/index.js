@@ -1,4 +1,4 @@
-export const updatePlayer = (player, score, pref, pref2, tier, division, descriptor) => {
+export const updatePlayer = (player, score, pref, pref2, tier, division, descriptor, stats) => {
     return {
         type: 'UPDATE',
         payloadPlayer: player,
@@ -7,7 +7,8 @@ export const updatePlayer = (player, score, pref, pref2, tier, division, descrip
         payloadPref2: pref2,
         payloadTier: tier,
         payloadDivision: division,
-        payloadDescriptor: descriptor
+        payloadDescriptor: descriptor,
+        payloadStats: stats
     }
 }
 
