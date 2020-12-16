@@ -27,7 +27,6 @@ class Profile extends React.Component {
 
 
   getProfile = async () => {
-    
     // const url = `https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${this.state.query}?api_key=${API_KEY}`;
     // console.log("fetching" + proxyurl + url);
     // const response = await fetch(proxyurl + url);
