@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {update, updateTeam, updateTotal} from './actions';
+import {update, updateTeam, updateTotal} from '../actions';
 
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
@@ -34,13 +34,13 @@ function Sort() {
         switch(pos) {
             case 'TOP':
                 return 0;
-            case 'JUNGLE':
+            case 'JG':
                 return 1;
             case 'MID':
                 return 2;
-            case 'BOTTOM':
+            case 'BOT':
                 return 3;
-            case 'SUPPORT':
+            case 'SUPP':
                 return 4;
             default:
                 return -1;
