@@ -1,0 +1,11 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "server",
+  "main": "app.js",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.0",
+    "cors": "^2.8.5"
+  }
+}

@@ -28,10 +28,15 @@ class Profile extends React.Component {
 
   getProfile = async () => {
     
-    const url = `https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${this.state.query}?api_key=${API_KEY}`;
-    console.log("fetching" + proxyurl + url);
-    const response = await fetch(proxyurl + url);
-    console.log(response);
+    // const url = `https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${this.state.query}?api_key=${API_KEY}`;
+    // console.log("fetching" + proxyurl + url);
+    // const response = await fetch(proxyurl + url);
+    // console.log(response);
+
+    const url = `http://localhost:3001/summonerName/${this.state.query}/`;
+    console.log("fetching" + url);
+    const response = await fetch(url);
+    
     const data = await response.json();
 
     this.setState({profile: {summonerName: data.name}});
@@ -43,9 +48,14 @@ class Profile extends React.Component {
   getRank = async () => {
 
     let id = await this.getProfile();
-    const url = `https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/${id.id}?api_key=${API_KEY}`;
-    const response = await fetch(proxyurl + url);
+    // const url = `https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/${id.id}?api_key=${API_KEY}`;
+    // const response = await fetch(proxyurl + url);
+    // const data = await response.json();
+
+    const url = `http://localhost:3001/summonerId/${id.id}`;
+    const response = await fetch(url);
     const data = await response.json();
+
     let data3;
     let i;
     for(i = 0; i < data.length; i++) {
@@ -76,20 +86,16 @@ class Profile extends React.Component {
   getRole = async () => {
 
     let id = await this.getProfile();
-    let url = `https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${id.accountId}?queue=420&api_key=${API_KEY}`;
+    // let url = `https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${id.accountId}?queue=420&api_key=${API_KEY}`;
 
-    // if summoner is unranked, look at normal games
+    // // if summoner is unranked, look at normal games
     
     
-    let response = await fetch(proxyurl + url);
+    // let response = await fetch(proxyurl + url);
+    // let data = await response.json();
+    let url = `http://localhost:3001/games/${id.accountId}`;
+    let response = await fetch(url);
     let data = await response.json();
-
-    if(data.matches == null){
-      console.log("couldnt find ranked");
-      url = `https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${id.accountId}?queue=400&api_key=${API_KEY}`;
-      response = await fetch(proxyurl + url);
-      data = await response.json();
-    }
 
     let i;
     let matchdata = [];
@@ -157,9 +163,13 @@ class Profile extends React.Component {
   }
 
   getMatchStats = async (match) => {
-    const matchurl = `https://na1.api.riotgames.com/lol/match/v4/matches/${match.gameId}?api_key=${API_KEY}`;
-    const matchresponse = await fetch(proxyurl + matchurl);
-    const matchdata = await matchresponse.json();
+    // const matchurl = `https://na1.api.riotgames.com/lol/match/v4/matches/${match.gameId}?api_key=${API_KEY}`;
+    // const matchresponse = await fetch(proxyurl + matchurl);
+    // const matchdata = await matchresponse.json();
+
+    const url = `http://localhost:3001/match/${match.gameId}`;
+    const response = await fetch(url);
+    const matchdata = await response.json();
 
     let matchtime = matchdata.gameDuration;
     let i = 0;

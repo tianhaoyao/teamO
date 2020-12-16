@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {update, updateTeam, updateTotal} from './actions';
+import {update, updateTeam, updateTotal} from '../actions';
 
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';

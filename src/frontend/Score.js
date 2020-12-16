@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import Typography from '@material-ui/core/Typography';
 import {Grid} from '@material-ui/core'
-import { updatePlayer } from './actions';
+import { updatePlayer } from '../actions';
 import { useDispatch } from 'react-redux';
 import * as rankData from './settings/ranks.json';
 import * as easteregg from './settings/easteregg.json';
