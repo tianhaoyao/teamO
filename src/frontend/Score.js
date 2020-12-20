@@ -186,17 +186,18 @@ function Score(props) {
         let dmgbonus = getDmgBonus();
         let goldbonus = getGoldBonus();
         
+        let bestAspect = Math.max(csbonus, kdabonus, kpbonus, goldbonus, dmgbonus);
         let worstAspect = Math.min(csbonus, kdabonus, kpbonus, goldbonus, dmgbonus);
 
         if(worstAspect <= 0) {
 
             switch(worstAspect) {
                 case csbonus:
-                    descriptor = "Zerojaw CS";
+                    descriptor = "Bad CS";
                     break;
 
                 case kdabonus:
-                    descriptor = "0/16/2";
+                    descriptor = "Bad KDA";
                     break;
     
                 case kpbonus:
@@ -215,7 +216,27 @@ function Score(props) {
         }
         
         else {
-            descriptor = "OKKKKKKKK";
+            switch(bestAspect) {
+                case csbonus:
+                    descriptor = "CS King";
+                    break;
+
+                case kdabonus:
+                    descriptor = "KDA";
+                    break;
+    
+                case kpbonus:
+                    descriptor = "Mr.Worldwide";
+                    break;
+            
+                case goldbonus:
+                    descriptor = "Bill Gates";
+                    break;
+
+                case dmgbonus: 
+                    descriptor = "Aggressive";
+                    break;
+            }
         }
 
 

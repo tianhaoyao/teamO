@@ -7,7 +7,7 @@ async function main(){
      * Connection URI. Update <username>, <password>, and <your-cluster-url> to reflect your cluster.
      * See https://docs.mongodb.com/ecosystem/drivers/node/ for more details
      */
-    const uri = "mongodb+srv://admin:aBdfjLt4Q9Hws9g@cache.t4kdx.mongodb.net/admin?retryWrites=true&w=majority";
+    const uri = ""
  
 
     const client = new MongoClient(uri, { useUnifiedTopology: true });
