@@ -22,7 +22,7 @@ async function getAccount(name) {
         const response = await axios.get(url);
         return response.data
     } catch (error) {
-      //console.error(error);
+      console.error(error);
     }
 }
 
@@ -32,7 +32,7 @@ async function getSummoner(id) {
         const response = await axios.get(url);
         return response.data
     } catch (error) {
-      //console.error(error);
+      console.error(error);
     }
 }
 
@@ -44,6 +44,7 @@ async function getGames(accountId) {
     } catch (error) {
         const url = `https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${accountId}?queue=400&api_key=${API_KEY}`;
         const response = await axios.get(url);
+        console.log("normals");
         return response.data
     }
 }
@@ -54,7 +55,7 @@ async function getMatch(matchId) {
         const response = await axios.get(url);
         return response.data
     } catch (error) {
-      //console.error(error);
+      console.error(error);
     }
 }
 
@@ -64,7 +65,7 @@ app.get('/summonerName/:name', async (req, res) => {
         res.send(data)
     }
     catch (error) {
-        
+        console.error(error);
     }
 })
 
@@ -74,7 +75,7 @@ app.get('/summonerId/:id', async (req, res) => {
         res.send(data)
     }
     catch (error) {
-        
+        console.error(error);
     }
 })
 
@@ -84,7 +85,7 @@ app.get('/games/:accountId', async (req, res) => {
         res.send(data)
     }
     catch (error) {
-        
+        console.error(error);
     }
 })
 
@@ -94,7 +95,7 @@ app.get('/match/:matchId', async (req, res) => {
         res.send(data)
     }
     catch (error) {
-        
+        console.error(error);
     }
 })
 

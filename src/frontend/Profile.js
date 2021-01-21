@@ -52,112 +52,126 @@ class Profile extends React.Component {
     // const data = await response.json();
 
     const url = `http://localhost:3001/summonerId/${id.id}`;
-    const response = await fetch(url);
-    const data = await response.json();
-
-    let data3;
-    let i;
-    for(i = 0; i < data.length; i++) {
-      if (data[i].queueType.localeCompare('RANKED_SOLO_5x5') === 0) {
-        data3 = data[i];
-
+    try{
+      const response = await fetch(url);
+      const data = await response.json();
+  
+      let data3;
+      let i;
+      for(i = 0; i < data.length; i++) {
+        if (data[i].queueType.localeCompare('RANKED_SOLO_5x5') === 0) {
+          data3 = data[i];
+  
+        }
+      }
+  
+      // UNRANKED
+      if(data3 == null) {
+        this.setState(prevState => ({
+          profile: {
+              ...prevState.profile,
+              tier: 'UNRANKED', 
+              rank: 'IV', 
+              leaguePoints: 0, 
+              summonerId: id.id
+          }
+        }));
+      }
+      else {
+        this.setState({profile: data3});
       }
     }
-
-    // UNRANKED
-    if(data3 == null) {
-      this.setState(prevState => ({
-        profile: {
-            ...prevState.profile,
-            tier: 'UNRANKED', 
-            rank: 'IV', 
-            leaguePoints: 0, 
-            summonerId: id.id
-        }
-      }));
+    catch(err){
+        console.log("getrank err")
+        console.log(err)
+        this.setState({submitted: false})
     }
-    else {
-      this.setState({profile: data3});
-    }
+    
     
   }
 
   getRole = async () => {
+    try{
+      let id = await this.getProfile();
+      // let url = `https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${id.accountId}?queue=420&api_key=${API_KEY}`;
 
-    let id = await this.getProfile();
-    // let url = `https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${id.accountId}?queue=420&api_key=${API_KEY}`;
-
-    // // if summoner is unranked, look at normal games
+      // // if summoner is unranked, look at normal games
+      
+      
+      // let response = await fetch(proxyurl + url);
+      // let data = await response.json();
+      let url = `http://localhost:3001/games/${id.accountId}`;
     
-    
-    // let response = await fetch(proxyurl + url);
-    // let data = await response.json();
-    let url = `http://localhost:3001/games/${id.accountId}`;
-    let response = await fetch(url);
-    let data = await response.json();
-
-    let i;
-    let matchdata = [];
-    let kills = 0;
-    let deaths = 0;
-    let assists = 0;
-    let cs = 0;
-    let matchtime = 0;
-    let kpS = 0;
-    let dmgS = 0;
-    let goldS = 0;
-    let currentmatch;
-    let rankedCount = {"MID":0, "TOP":0, "SUPP":0, "BOT":0, "JG":0};
-    if(data.matches != null){
-      for(i = 0; i < data.matches.length; i++) {
-        
-        if(i <= NUM_RECENT_MATCH){
-          currentmatch = await this.getMatchStats(data.matches[i]);
-          kills += currentmatch.kills;
-          deaths += currentmatch.deaths;
-          assists += currentmatch.assists;
-          cs += currentmatch.cs;
-          matchtime += currentmatch.matchtime;
-          kpS += currentmatch.compareKP;
-          dmgS += currentmatch.damageShare;
-          goldS += currentmatch.goldShare;
-          matchdata.push(currentmatch);
-
+      let response = await fetch(url);
+      let data = await response.json();
+  
+      let i;
+      let matchdata = [];
+      let kills = 0;
+      let deaths = 0;
+      let assists = 0;
+      let cs = 0;
+      let matchtime = 0;
+      let kpS = 0;
+      let dmgS = 0;
+      let goldS = 0;
+      let currentmatch;
+      let rankedCount = {"MID":0, "TOP":0, "SUPP":0, "BOT":0, "JG":0};
+      if(data.matches != null){
+        for(i = 0; i < data.matches.length; i++) {
+          
+          if(i <= NUM_RECENT_MATCH){
+            currentmatch = await this.getMatchStats(data.matches[i]);
+            kills += currentmatch.kills;
+            deaths += currentmatch.deaths;
+            assists += currentmatch.assists;
+            cs += currentmatch.cs;
+            matchtime += currentmatch.matchtime;
+            kpS += currentmatch.compareKP;
+            dmgS += currentmatch.damageShare;
+            goldS += currentmatch.goldShare;
+            matchdata.push(currentmatch);
+  
+          }
+          if (data.matches[i].lane.localeCompare('MID') === 0) {
+            rankedCount["MID"] += 1;
+          }
+          else if (data.matches[i].lane.localeCompare('JUNGLE') === 0) {
+            rankedCount["JG"] += 1;
+          }
+          else if (data.matches[i].lane.localeCompare('BOTTOM') === 0 && data.matches[i].role.localeCompare("DUO_CARRY") === 0) {
+            rankedCount["BOT"] += 1;
+          }
+          else if (data.matches[i].lane.localeCompare('BOTTOM') === 0 && data.matches[i].role.localeCompare("DUO_SUPPORT") === 0) {
+            rankedCount["SUPP"] += 1;
+          }
+          else if (data.matches[i].lane.localeCompare('TOP') === 0) {
+            rankedCount["TOP"] += 1;
+          }
         }
-        if (data.matches[i].lane.localeCompare('MID') === 0) {
-          rankedCount["MID"] += 1;
-        }
-        else if (data.matches[i].lane.localeCompare('JUNGLE') === 0) {
-          rankedCount["JG"] += 1;
-        }
-        else if (data.matches[i].lane.localeCompare('BOTTOM') === 0 && data.matches[i].role.localeCompare("DUO_CARRY") === 0) {
-          rankedCount["BOT"] += 1;
-        }
-        else if (data.matches[i].lane.localeCompare('BOTTOM') === 0 && data.matches[i].role.localeCompare("DUO_SUPPORT") === 0) {
-          rankedCount["SUPP"] += 1;
-        }
-        else if (data.matches[i].lane.localeCompare('TOP') === 0) {
-          rankedCount["TOP"] += 1;
-        }
+  
       }
-
+  
+      kpS /= NUM_RECENT_MATCH;
+      goldS /= NUM_RECENT_MATCH;
+      dmgS /= NUM_RECENT_MATCH;
+  
+  
+      let kda = (kills + assists) / deaths;
+      let cspm = cs/matchtime*60;
+      this.setState({stats: {kda: kda, cspm: cspm, kpS: kpS, goldS: goldS, dmgS: dmgS}});
+      let firstPref = Object.keys(rankedCount).reduce((a, b) => rankedCount[a] > rankedCount[b] ? a : b)
+      this.setState({prefRole: firstPref});
+      let temp = rankedCount;
+      delete temp[firstPref];
+      let secondPref = Object.keys(temp).reduce((a, b) => temp[a] > temp[b] ? a : b)
+      this.setState({prefRole2: secondPref});
+      this.setState({role: rankedCount});
     }
-
-    kpS /= NUM_RECENT_MATCH;
-    goldS /= NUM_RECENT_MATCH;
-    dmgS /= NUM_RECENT_MATCH;
-
-
-    let kda = (kills + assists) / deaths;
-    let cspm = cs/matchtime*60;
-    this.setState({stats: {kda: kda, cspm: cspm, kpS: kpS, goldS: goldS, dmgS: dmgS}});
-    let firstPref = Object.keys(rankedCount).reduce((a, b) => rankedCount[a] > rankedCount[b] ? a : b)
-    this.setState({prefRole: firstPref});
-    let temp = rankedCount;
-    delete temp[firstPref];
-    let secondPref = Object.keys(temp).reduce((a, b) => temp[a] > temp[b] ? a : b)
-    this.setState({prefRole2: secondPref});
-    this.setState({role: rankedCount});
+    catch(err) {
+      console.log(err);
+      this.setState({submitted: false});
+    }
 
   }
 
@@ -193,6 +207,7 @@ class Profile extends React.Component {
       }
       catch(err) {
         console.log(err);
+        console.log("errr")
       }
     }
 
@@ -208,25 +223,30 @@ class Profile extends React.Component {
     let stats = {}
     try {
       stats = matchdata.participants[participantid].stats;
+      let teamstats = this.getTeamStats(stats, friendlyteam);
+
+      let kills = stats.kills;
+      let deaths = stats.deaths;
+      let assists = stats.assists;
+      let cs = stats.totalMinionsKilled;
+
+      // console.log(kda);
+      // console.log(kills + " " + deaths + " " + assists);
+      // console.log(cspm);
+      // console.log(cs);
+      // console.log(matchtime);
+      //this.setState({stats: {kda: kda, cspm: cspm}});
+      return Object.assign({kills: kills, deaths: deaths, assists: assists, cs: cs, matchtime: matchtime}, teamstats);
     }
     catch(err) {
       console.log(err);
+      console.log(participantid)
+      console.log(matchdata.participants)
+      console.log(matchdata.participants[participantid])
+      console.log("errrrrrrrrrrr")
     }
 
-    let teamstats = this.getTeamStats(stats, friendlyteam);
-
-    let kills = stats.kills;
-    let deaths = stats.deaths;
-    let assists = stats.assists;
-    let cs = stats.totalMinionsKilled;
-
-    // console.log(kda);
-    // console.log(kills + " " + deaths + " " + assists);
-    // console.log(cspm);
-    // console.log(cs);
-    // console.log(matchtime);
-    //this.setState({stats: {kda: kda, cspm: cspm}});
-    return Object.assign({kills: kills, deaths: deaths, assists: assists, cs: cs, matchtime: matchtime}, teamstats);
+    
   }
 
   getTeamStats = (stats, friendlyteam) => {
@@ -262,10 +282,13 @@ class Profile extends React.Component {
   }
 
   handleSubmit(event) {
+
     this.setState({submitted: true});
     this.getRank();
     this.getRole();
     event.preventDefault();
+
+    
   }
 
   setScore(score) {

@@ -65,11 +65,11 @@ function Results(props){
                 <Grid container spacing={3} alignItems="center">
                 <Grid item xs={12} sm={3}>
                   {(teams[props.team][props.pos][4] != null && teams[props.team][props.pos][5] != null)? 
-                  // <Icons 
-                  //   tier={teams[props.team][props.pos][4]}
-                  //   division={teams[props.team][props.pos][5]}>
-                  // </Icons>
-                  <br></br>
+                  <Icons 
+                    tier={teams[props.team][props.pos][4]}
+                    division={teams[props.team][props.pos][5]}>
+                  </Icons>
+                  //<br></br>
                   :
                   <br/>
                 }
