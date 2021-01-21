@@ -9,29 +9,12 @@ Summoner Score = rank + (lp * multiplier) + bonus
 
 | Rank         | Base Score | LP Multiplier |
 |--------------|------------|---------------|
-| Iron IV      | 300        | 1             |
-| Iron III     | 400        | 1             |
-| Iron II      | 550        | 1             |
 | Iron I       | 650        | 1             |
-| Bronze IV    | 800        | 1             |
-| Bronze III   | 900        | 1             |
-| Bronze II    | 1050       | 1             |
-| Bronze I     | 1150       | 1             |
-| Silver IV    | 1250       | 1             |
-| Silver III   | 1400       | 1             |
-| Silver II    | 1500       | 1             |
-| Silver I     | 1600       | 1             |
-| Gold IV      | 1800       | 1.5           |
-| Gold III     | 1900       | 1.5           |
-| Gold II      | 2000       | 1.5           |
+...
 | Gold I       | 2200       | 1.5           |
-| Platinum IV  | 2300       | 1.5           |
-| Platinum III | 2500       | 1.5           |
-| Platinum II  | 2700       | 1.5           |
+...
 | Platinum I   | 2850       | 1.5           |
-| Diamond IV   | 2950       | 1.7           |
-| Diamond III  | 3200       | 1.7           |
-| Diamond II   | 3400       | 1.7           |
+...
 | Diamond I    | 3600       | 1.7           |
 | Master+      | 3900       | lp^1.07       |
 
