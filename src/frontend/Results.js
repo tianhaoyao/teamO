@@ -15,8 +15,7 @@ import mid from './resources/MID.png';
 import bottom from './resources/BOTTOM.png';
 import support from './resources/SUPPORT.png';
 
-function Results(props){
-   //const scores = useSelector(state => state.scoreReducer);
+function Results(props) {
    const teams = useSelector(state => state.teamReducer);
    let position = "";
    switch(props.pos) {
@@ -41,18 +40,50 @@ function Results(props){
    let color;
    if(props.team === "1") {
       if((typeof teams[props.team] !== "undefined" && teams[props.team][props.pos] !== "-")) {
-        color = "#FF6699";
+        if(props.theme) {
+          //red team, dark, picked
+          color = "#700629";
+        }
+        else {
+          //red team, light, picked
+          color = "#FF6699";
+        }
+        
       }
       else {
-        color = "#ff96ad";
+        if(props.theme) {
+          //red team, dark, empty
+          color = "#960938";
+        }
+        else {
+          //red team, light, empty
+          color = "#ff96ad";
+        }
+        
       }
    }
    else {
     if((typeof teams[props.team] !== "undefined" && teams[props.team][props.pos] !== "-")) {
-      color = "#66B3FF"
+      if(props.theme) {
+        //blue team, dark, picked 
+        color = "#04265c";
+      }
+      else{
+        //blue team, light, picked
+        color = "#66B3FF"
+      }
+      
     }
     else {
-      color = "#9ecfff";
+      if(props.theme) {
+        //blue team, dark, empty
+        color = "#013280";
+      }
+      else{
+        //blue team, light, empty
+        color = "#9ecfff";
+      }
+      
     }
    }  
 
@@ -95,12 +126,12 @@ function Results(props){
                            Score: {teams[props.team][props.pos][1]}
                         </Typography>
                         <Typography variant="body2" color="textSecondary" component="p">
+                        Pref: {teams[props.team][props.pos][2]}, {teams[props.team][props.pos][3]}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary" component="p">
                            "{teams[props.team][props.pos][6]}"
                          </Typography>
-                      <Typography variant="body2" color="textSecondary" component="p">
-                       {/* mid: {role.MID} bot: {role.BOTTOM} supp: {role.SUPPORT} top: {role.TOP} jg: {role.JUNGLE} */}
-                       Pref: {teams[props.team][props.pos][2]}, {teams[props.team][props.pos][3]}
-                      </Typography>
+                      
                       </div>
                   </div>
                   :

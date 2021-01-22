@@ -1,5 +1,0 @@
-{
-    "proxy": {
-        "addr": "https://cors-anywhere.herokuapp.com/"
-    }
-}
