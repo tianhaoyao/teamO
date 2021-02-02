@@ -10,10 +10,11 @@ import TotalScore from './TotalScore';
 import {useSelector} from 'react-redux';
 import scoreReducer from './reducers/scoreCollection';
 import teamReducer from './reducers/teamReducer';
+import { PinDropSharp } from '@material-ui/icons';
 
 
 
-function Show(){
+function Show(props){
     return (
       <div className="Show">
         <Container maxWidth="md">
@@ -28,6 +29,7 @@ function Show(){
                <Results
                  team="0"
                  pos="0"
+                 theme={props.theme}
                />
              </Grid>
 
@@ -35,6 +37,7 @@ function Show(){
                <Results
                  team="1"
                  pos="0"
+                 theme={props.theme}
                />
              </Grid>
 
@@ -42,6 +45,7 @@ function Show(){
                <Results
                  team="0"
                  pos="1"
+                 theme={props.theme}
                />
              </Grid>
 
@@ -49,6 +53,7 @@ function Show(){
                <Results
                  team="1"
                  pos="1"
+                 theme={props.theme}
                />
              </Grid>
 
@@ -57,6 +62,7 @@ function Show(){
                <Results
                  team="0"
                  pos="2"
+                 theme={props.theme}
                />
              </Grid>
 
@@ -64,6 +70,7 @@ function Show(){
                <Results
                  team="1"
                  pos="2"
+                 theme={props.theme}
                />
              </Grid>
 
@@ -71,6 +78,7 @@ function Show(){
                <Results
                  team="0"
                  pos="3"
+                 theme={props.theme}
                />
              </Grid>
 
@@ -78,6 +86,7 @@ function Show(){
                <Results
                  team="1"
                  pos="3"
+                 theme={props.theme}
                />
              </Grid>
 
@@ -85,6 +94,7 @@ function Show(){
                <Results
                  team="0"
                  pos="4"
+                 theme={props.theme}
                />
              </Grid>
 
@@ -92,6 +102,7 @@ function Show(){
                <Results
                  team="1"
                  pos="4"
+                 theme={props.theme}
                />
              </Grid>
 

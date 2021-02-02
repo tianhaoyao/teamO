@@ -7,31 +7,40 @@ import {Grid, Card, CardActionArea, CardContent, Typography, TextField, Circular
 import Score from './Score';
 import Icons from './Icons';
 
-import * as proxy from './proxy.json';
 
-
-const NUM_RECENT_MATCH = 5;
+const NUM_RECENT_MATCH = 2;
 const API_KEY = process.env.REACT_APP_TEAMO_API_KEY;
-const proxyurl = proxy.proxy.addr;
 
 class Profile extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {profile: {}, query: '', submitted: false, score: 0, prefRole: '', prefRole2: '', stats: {}}
+    
+    
+    
     this.getRank = this.getRank.bind(this);
     this.getProfile = this.getProfile.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.getRole = this.getRole.bind(this);
+    if(!this.props.player) {
+      this.state = {profile: {}, query: '', submitted: false, score: 0, prefRole: '', prefRole2: '', stats: {}}
+    }
+    else {
+      this.state = {profile: {}, query: this.props.player, submitted: true, score: 0, prefRole: '', prefRole2: '', stats: {}}
+    }
+  }
+
+  componentDidMount() {
+    if(this.props.player) {
+      this.setState({query: this.props.player});
+      this.setState({submitted: true});
+      this.getRank();
+      this.getRole();
+    }
   }
 
 
   getProfile = async () => {
-    // const url = `https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${this.state.query}?api_key=${API_KEY}`;
-    // console.log("fetching" + proxyurl + url);
-    // const response = await fetch(proxyurl + url);
-    // console.log(response);
-
     const url = `http://localhost:3001/summonerName/${this.state.query}/`;
     console.log("fetching" + url);
     const response = await fetch(url);
@@ -47,9 +56,6 @@ class Profile extends React.Component {
   getRank = async () => {
 
     let id = await this.getProfile();
-    // const url = `https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/${id.id}?api_key=${API_KEY}`;
-    // const response = await fetch(proxyurl + url);
-    // const data = await response.json();
 
     const url = `http://localhost:3001/summonerId/${id.id}`;
     try{
@@ -93,13 +99,6 @@ class Profile extends React.Component {
   getRole = async () => {
     try{
       let id = await this.getProfile();
-      // let url = `https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${id.accountId}?queue=420&api_key=${API_KEY}`;
-
-      // // if summoner is unranked, look at normal games
-      
-      
-      // let response = await fetch(proxyurl + url);
-      // let data = await response.json();
       let url = `http://localhost:3001/games/${id.accountId}`;
     
       let response = await fetch(url);
@@ -176,10 +175,6 @@ class Profile extends React.Component {
   }
 
   getMatchStats = async (match) => {
-    // const matchurl = `https://na1.api.riotgames.com/lol/match/v4/matches/${match.gameId}?api_key=${API_KEY}`;
-    // const matchresponse = await fetch(proxyurl + matchurl);
-    // const matchdata = await matchresponse.json();
-
     const url = `http://localhost:3001/match/${match.gameId}`;
     const response = await fetch(url);
     const matchdata = await response.json();
@@ -193,7 +188,7 @@ class Profile extends React.Component {
     let friendlyteam = []
     for(let i = 0; i < 10; i++) {
       try{
-        if(matchdata.participantIdentities[i].player.summonerId === this.state.profile.summonerId){
+        if(matchdata.participantIdentities[i].player.summonerName === this.state.profile.summonerName){
           participantid = i;
           teamid = matchdata.participants[i].teamId;
         }
@@ -239,15 +234,13 @@ class Profile extends React.Component {
       return Object.assign({kills: kills, deaths: deaths, assists: assists, cs: cs, matchtime: matchtime}, teamstats);
     }
     catch(err) {
-      console.log(err);
-      console.log(participantid)
-      console.log(matchdata.participants)
-      console.log(matchdata.participants[participantid])
-      console.log("errrrrrrrrrrr")
+      console.log(err)
     }
 
     
   }
+
+  
 
   getTeamStats = (stats, friendlyteam) => {
     let totalkills = 0;
@@ -314,7 +307,7 @@ class Profile extends React.Component {
     };
     return (
       <div className="Profile">
-        <Card className="profile" style={{backgroundColor: "#F5F5F5"}}>
+        <Card className="profile">
           <CardActionArea>
             <CardContent>
               {(this.state.submitted) ? 
