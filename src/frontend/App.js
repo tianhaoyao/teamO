@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from './resources/teamo.png'
 import ReactDOM from 'react-dom';
 
-import {Container, Grid, Divider, Switch, Typography, ThemeProvider} from '@material-ui/core'
+
+import {Container, Grid, Divider, Switch, Typography, ThemeProvider, TextField, Button} from '@material-ui/core'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import CssBaseline from "@material-ui/core/CssBaseline";
 
@@ -16,6 +17,10 @@ import { LiveTvRounded } from '@material-ui/icons';
 
 
 function App(){
+
+  const [multi, setMulti] = useState([]);
+  const [query, setQuery] = useState("");
+  const [multiSub, setMultiSub] = useState(false);
 
   const lighttheme = createMuiTheme({
     palette: {
@@ -39,6 +44,20 @@ function App(){
       }
       
   });
+
+  const handleChange = (event) => {
+    setQuery(event.target.value);
+    event.preventDefault();
+  }
+
+  const handleSubmit = (event) => {
+    setMulti(query.split(', '))
+    console.log(multi)
+    setMultiSub(true);
+    event.preventDefault();
+
+    
+  }
 
   const darktheme = createMuiTheme({
       palette: {
@@ -85,55 +104,62 @@ function App(){
             <img src={logo}></img>
             <Switch onChange={changeNight}/>
           </Grid>
+          {!multiSub ? 
+            <form className="multisearch" onSubmit={handleSubmit}>
+              <TextField id="standard-basic" label="Multi Search" onChange={handleChange} fullWidth="true" defaultValue={query}/>
+              <Button type="submit">Submit</Button>
+            </form>
+            : <br/>
+          } 
 
-          
+
+          {multiSub ? 
           <Grid container spacing={3}>
-          
-          <Grid item xs={12} sm={6}>
-            <Profile/>
+            <Grid item xs={12} sm={6}>
+              <Profile player={multi[0]}/>
+            </Grid>
+    
+            <Grid item xs={12} sm={6}>
+              <Profile player={multi[1]}/>
+            </Grid>
+            
+            <Grid item xs={12} sm={6}>
+              <Profile player={multi[2]}/>
+            </Grid>
+    
+            <Grid item xs={12} sm={6}>
+              <Profile player={multi[3]}/>
+            </Grid>
+            
+            <Grid item xs={12} sm={6}>
+              <Profile player={multi[4]}/>
+            </Grid>
+    
+            <Grid item xs={12} sm={6}>
+              <Profile player={multi[5]}/>
+            </Grid>
+            
+            <Grid item xs={12} sm={6}>
+              <Profile player={multi[6]}/>
+            </Grid>
+    
+            <Grid item xs={12} sm={6}>
+              <Profile player={multi[7]}/>
+            </Grid>
+            
+            <Grid item xs={12} sm={6}>
+              <Profile player={multi[8]}/>
+            </Grid>
+    
+            <Grid item xs={12} sm={6}>
+              <Profile player={multi[9]}/>
+            </Grid>
           </Grid>
-  
-          <Grid item xs={12} sm={6}>
-            <Profile/>
-          </Grid>
-          
-          <Grid item xs={12} sm={6}>
-            <Profile/>
-          </Grid>
-  
-          <Grid item xs={12} sm={6}>
-            <Profile/>
-          </Grid>
-          
-          <Grid item xs={12} sm={6}>
-            <Profile/>
-          </Grid>
-  
-          <Grid item xs={12} sm={6}>
-            <Profile/>
-          </Grid>
-          
-          <Grid item xs={12} sm={6}>
-            <Profile/>
-          </Grid>
-  
-          <Grid item xs={12} sm={6}>
-            <Profile/>
-          </Grid>
-          
-          <Grid item xs={12} sm={6}>
-            <Profile/>
-          </Grid>
-  
-          <Grid item xs={12} sm={6}>
-            <Profile/>
-          </Grid>
-
-          <Grid item xs={12} sm={12}>
-          
-          </Grid>
+          :
+          <br></br>
+        }
          
-        </Grid>
+        
 
         </Container>
         
