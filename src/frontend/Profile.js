@@ -8,18 +8,35 @@ import Score from './Score';
 import Icons from './Icons';
 
 
-const NUM_RECENT_MATCH = 5;
+const NUM_RECENT_MATCH = 2;
 const API_KEY = process.env.REACT_APP_TEAMO_API_KEY;
 
 class Profile extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {profile: {}, query: '', submitted: false, score: 0, prefRole: '', prefRole2: '', stats: {}}
+    
+    
+    
     this.getRank = this.getRank.bind(this);
     this.getProfile = this.getProfile.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.getRole = this.getRole.bind(this);
+    if(!this.props.player) {
+      this.state = {profile: {}, query: '', submitted: false, score: 0, prefRole: '', prefRole2: '', stats: {}}
+    }
+    else {
+      this.state = {profile: {}, query: this.props.player, submitted: true, score: 0, prefRole: '', prefRole2: '', stats: {}}
+    }
+  }
+
+  componentDidMount() {
+    if(this.props.player) {
+      this.setState({query: this.props.player});
+      this.setState({submitted: true});
+      this.getRank();
+      this.getRole();
+    }
   }
 
 
@@ -171,7 +188,7 @@ class Profile extends React.Component {
     let friendlyteam = []
     for(let i = 0; i < 10; i++) {
       try{
-        if(matchdata.participantIdentities[i].player.summonerId === this.state.profile.summonerId){
+        if(matchdata.participantIdentities[i].player.summonerName === this.state.profile.summonerName){
           participantid = i;
           teamid = matchdata.participants[i].teamId;
         }
@@ -217,15 +234,13 @@ class Profile extends React.Component {
       return Object.assign({kills: kills, deaths: deaths, assists: assists, cs: cs, matchtime: matchtime}, teamstats);
     }
     catch(err) {
-      console.log(err);
-      console.log(participantid)
-      console.log(matchdata.participants)
-      console.log(matchdata.participants[participantid])
-      console.log("errrrrrrrrrrr")
+      console.log(err)
     }
 
     
   }
+
+  
 
   getTeamStats = (stats, friendlyteam) => {
     let totalkills = 0;
