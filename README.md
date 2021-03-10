@@ -1,11 +1,11 @@
 
 # TeamO
 
-React Webapp that divides summoners into even teams. Frontend using Material-UI. Made with Riot-API. Uses Redux to keep states for players.
+React Webapp that divides summoners into even teams. Frontend using Material-UI. Backend using Node, Express, MongoDB (soon). Calls Riot-API. Uses Redux to keep states for players.
 
-## Calculating Summoner Score
+## Calculating Player Score
 
-Summoner Score = rank + (lp * multiplier) + bonus
+Player Score = rank + (lp * multiplier) + bonus
 
 | Rank         | Base Score | LP Multiplier |
 |--------------|------------|---------------|
@@ -41,10 +41,15 @@ Compares your damage done to enemy team relative to your team. The higher share 
 
 Models constraint satisfaction problems (CSP).
 
-1. After finding out every player's preferred role, take the 2 best players of each role and insert them on different teams
-2. The remaining players are fillers, and are sorted based on skill level
-3. The fillers are given a random open position (prioritizing the current score of both teams, whichever is less)
+1. Place the 2 best players of each role in their preferred role and insert them on different teams
+2. Remaining players are fillers, and are sorted based on skill level
+3. Fillers are given a random open position (prioritizing the current score of both teams, whichever is less)
 4. From top lane downwards, the players are swapped between the two teams. If the score difference decreases, the players remain in their new teams. Otherwise, keep the original arrangement.
+
+## Features Coming Soon
+1. MongoDB cache to ease API usage
+2. ~~Tesseract OCR implementation~~ - it has been tested that Tesseract cannot read the design of League client properly, scrapping this idea until another OCR service can
+3. Expand this project onto other games (e.g. Soccer)
 
 ## Running the Program
 
