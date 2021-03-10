@@ -9,17 +9,17 @@ const API_KEY = process.env.REACT_APP_TEAMO_API_KEY;
 var bodyParser = require('body-parser')
 const axios = require('axios');
 
+let requestcount = 0;
+
 
 app.use(cors())
-
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
 
 async function getAccount(name) {
     try {
         const url = `https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${API_KEY}`;
         const response = await axios.get(url);
+        requestcount++;
+        console.log(requestcount);
         return response.data
     } catch (error) {
       console.error(error);
@@ -30,6 +30,8 @@ async function getSummoner(id) {
     try {
         const url = `https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/${id}?api_key=${API_KEY}`;
         const response = await axios.get(url);
+        requestcount++;
+        console.log(requestcount);
         return response.data
     } catch (error) {
       console.error(error);
@@ -40,6 +42,8 @@ async function getGames(accountId) {
     try {
         const url = `https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${accountId}?queue=420&api_key=${API_KEY}`;
         const response = await axios.get(url);
+        requestcount++;
+        console.log(requestcount);
         return response.data
     } catch (error) {
         const url = `https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${accountId}?queue=400&api_key=${API_KEY}`;
@@ -53,6 +57,8 @@ async function getMatch(matchId) {
     try {
         const url = `https://na1.api.riotgames.com/lol/match/v4/matches/${matchId}?api_key=${API_KEY}`;
         const response = await axios.get(url);
+        requestcount++;
+        console.log(requestcount);
         return response.data
     } catch (error) {
       console.error(error);

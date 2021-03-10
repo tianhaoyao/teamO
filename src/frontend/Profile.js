@@ -7,7 +7,7 @@ import {Grid, Card, CardActionArea, CardContent, Typography, TextField, Circular
 import Score from './Score';
 import Icons from './Icons';
 
-const NUM_RECENT_MATCH = 2;
+const NUM_RECENT_MATCH = 1;
 
 const API_KEY = process.env.REACT_APP_TEAMO_API_KEY;
 
@@ -42,23 +42,27 @@ class Profile extends React.Component {
 
   getProfile = async () => {
     const url = `http://localhost:3001/summonerName/${this.state.query}/`;
-    console.log("fetching" + url);
-    const response = await fetch(url);
+    try{
+      const response = await fetch(url);
     
-    const data = await response.json();
+      const data = await response.json();
 
-    this.setState({profile: {summonerName: data.name}});
-    console.log("fetched");
-    return data;
+      this.setState({profile: {summonerName: data.name}});
+      return data;
+    }
+    catch(err){
+      alert("Player not found");
+    }
+    
 
   }
 
   getRank = async () => {
-
-    let id = await this.getProfile();
-
-    const url = `http://localhost:3001/summonerId/${id.id}`;
     try{
+      let id = await this.getProfile();
+
+      const url = `http://localhost:3001/summonerId/${id.id}`;
+    
       const response = await fetch(url);
       const data = await response.json();
   

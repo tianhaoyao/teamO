@@ -52,7 +52,6 @@ function App(){
 
   const handleSubmit = (event) => {
     setMulti(query.split(', '))
-    console.log(multi)
     setMultiSub(true);
     event.preventDefault();
 

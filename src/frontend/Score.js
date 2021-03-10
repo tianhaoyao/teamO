@@ -245,11 +245,11 @@ function Score(props) {
         }
 
         bonus = csbonus + kdabonus + kpbonus + goldbonus + dmgbonus;
-        console.log("kdabonus for " + props.kda + ": " + kdabonus);
-        console.log("csbonus for " + props.cspm + ": " + csbonus);
-        console.log("kpbonus for " + props.kpS + ": " + kpbonus);
-        console.log("goldbonus for " + props.goldS + ": " + goldbonus);
-        console.log("dmgbonus for " + props.dmgS + ": " + dmgbonus);
+        // console.log("kdabonus for " + props.kda + ": " + kdabonus);
+        // console.log("csbonus for " + props.cspm + ": " + csbonus);
+        // console.log("kpbonus for " + props.kpS + ": " + kpbonus);
+        // console.log("goldbonus for " + props.goldS + ": " + goldbonus);
+        // console.log("dmgbonus for " + props.dmgS + ": " + dmgbonus);
         
         return [bonus, descriptor, [csbonus, kdabonus, kpbonus, goldbonus, dmgbonus]];
     }
