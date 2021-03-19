@@ -10,8 +10,12 @@ const playerSchema = new Schema({
         type: String,
         required: true
     },
-    division: {
+    rank: {
         type: String,
+        required: true
+    },
+    lp: {
+        type: Number,
         required: true
     },
     cs: {

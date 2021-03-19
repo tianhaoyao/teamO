@@ -19,6 +19,8 @@ class Profile extends React.Component {
     
     this.getRank = this.getRank.bind(this);
     this.getProfile = this.getProfile.bind(this);
+    this.getCache = this.getCache.bind(this);
+    this.setUsingCache = this.setUsingCache.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.getRole = this.getRole.bind(this);
@@ -34,11 +36,54 @@ class Profile extends React.Component {
     if(this.props.player) {
       this.setState({query: this.props.player});
       this.setState({submitted: true});
-      this.getRank();
-      this.getRole();
+      this.getCache();
+      
     }
   }
 
+  getCache = async () => {
+    const url = `http://localhost:3001/cache/${this.state.query}/`;
+    console.log(url)
+    try{
+      const response = await fetch(url);
+      const data = await response.json();
+      console.log(data)
+      if(Object.keys(data).length != 0) {
+        console.log("found")
+        this.setUsingCache(data);
+        return data;
+      }
+      else {
+        console.log("notfound")
+        this.getRank();
+        this.getRole();
+      }
+      
+    }
+    catch(err){
+      console.log(err)
+    }
+  }
+
+  setUsingCache = async(data) => {
+    this.setState({
+      profile: {
+        summonerName: data.name,
+        tier: data.tier,
+        rank: data.rank,
+        leaguePoints: data.lp
+      }, 
+      query: this.props.player, 
+      prefRole: data.pref1, 
+      prefRole2: data.pref2, 
+      stats: {
+        cspm: data.cs,
+        dmgS: data.dmg,
+        goldS: data.gold,
+        kda: data.kda,
+        kpS: data.kp
+      }})
+  }
 
   getProfile = async () => {
     const url = `http://localhost:3001/summonerName/${this.state.query}/`;
@@ -281,8 +326,7 @@ class Profile extends React.Component {
   handleSubmit(event) {
 
     this.setState({submitted: true});
-    this.getRank();
-    this.getRole();
+    this.getCache();
     event.preventDefault();
 
     
@@ -296,7 +340,6 @@ class Profile extends React.Component {
     const summonerName = this.state.profile.summonerName;
     const tier = this.state.profile.tier;
     const division = this.state.profile.rank;
-    const role = this.state.role;
     const lp = this.state.profile.leaguePoints;
     const prefRole = this.state.prefRole;
     const prefRole2 = this.state.prefRole2;
@@ -309,6 +352,7 @@ class Profile extends React.Component {
       height: "100%",
 
     };
+    console.log(this.state)
     return (
       <div className="Profile">
         <Card className="profile">
@@ -329,7 +373,7 @@ class Profile extends React.Component {
                 </Grid>
                 <Grid item xs={12} sm={9}>
                   
-                  {(summonerName != null && tier != null && role != null && lp != null && cspm != null && kda != null)?
+                  {(summonerName != null && tier != null && lp != null && cspm != null && kda != null && prefRole != null && prefRole2 != null)?
                   <div>
                     <Score
                     name={summonerName}

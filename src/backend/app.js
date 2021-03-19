@@ -35,11 +35,12 @@ let requestcount = 0;
 
 app.use(cors())
 
-async function insertPlayer(name, tier, division, cs, kda, dmg, gold, kp, pref1, pref2) {
+async function insertPlayer(name, tier, rank, lp, cs, kda, dmg, gold, kp, pref1, pref2) {
     const player = new Players({
         name: name,
         tier: tier,
-        division: division,
+        rank: rank,
+        lp: lp,
         cs: cs,
         kda: kda,
         dmg: dmg,
@@ -58,16 +59,12 @@ async function getAccount(name) {
         requestcount++;
         console.log(requestcount);
         console.log("getAccount")
-        console.log(response.data)
 
         const data = {
             id: response.data.id,
             accountId: response.data.accountId,
             name: response.data.name
         }
-
-        console.log("sending back")
-        console.log(data)
 
         return data
     } catch (error) {
@@ -118,21 +115,6 @@ async function getMatch(matchId) {
     }
 }
 
-async function getCache(summonerName) {
-    Players.findOne({ name: summonerName }, function(err, document) {
-        if(err) {
-            console.log(err);
-        }
-        if(document) {
-            return data
-        }
-        else {
-            console.log("didnt find")
-            return null
-        }
-    })
-}
-
 app.get('/summonerName/:name', async (req, res) => {
     try{
         let data = await getAccount(req.params.name)
@@ -174,25 +156,28 @@ app.get('/match/:matchId', async (req, res) => {
 })
 
 app.get('/cache/:summonerName', async (req, res) => {
-    try{
-        let data = await getCache(req.params.summonerName)
-        if(data) {
-            res.send(data);
+    Players.findOne({ name: req.params.summonerName }, function(err, document) {
+        if(err) {
+            console.log(err);
+        }
+        if(document != undefined) {
+            console.log("found, sending")
+            console.log(document)
+            res.send(document)
         }
         else {
-            res.send({});
+            console.log("didnt find!!")
+            res.send({})
         }
-    }
-    catch (error) {
-        console.error(error);
-    }
+    })
 })
 
 app.post('/insertcache/', function(req, res){
     try {
         let name = req.body.name
         let tier = req.body.tier
-        let division = req.body.division
+        let rank = req.body.rank
+        let lp = parseInt(req.body.lp)
         let cs = parseFloat(req.body.cs)
         let kda = parseFloat(req.body.kda)
         let dmg = parseFloat(req.body.dmg)
@@ -201,7 +186,7 @@ app.post('/insertcache/', function(req, res){
         let pref1 = req.body.pref1
         let pref2 = req.body.pref2
 
-        insertPlayer(name, tier, division, cs, kda, dmg, gold, kp, pref1, pref2)
+        insertPlayer(name, tier, rank, lp, cs, kda, dmg, gold, kp, pref1, pref2)
         res.sendStatus(200);
     }
     catch(err) {
