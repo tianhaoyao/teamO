@@ -7,7 +7,7 @@ import {Grid, Card, CardActionArea, CardContent, Typography, TextField, Circular
 import Score from './Score';
 import Icons from './Icons';
 
-const NUM_RECENT_MATCH = 1;
+const NUM_RECENT_MATCH = 3;
 
 const API_KEY = process.env.REACT_APP_TEAMO_API_KEY;
 
@@ -76,6 +76,9 @@ class Profile extends React.Component {
       query: this.props.player, 
       prefRole: data.pref1, 
       prefRole2: data.pref2, 
+      role: {
+        dummydata: 0
+      },
       stats: {
         cspm: data.cs,
         dmgS: data.dmg,
@@ -91,8 +94,9 @@ class Profile extends React.Component {
       const response = await fetch(url);
     
       const data = await response.json();
-
-      this.setState({profile: {summonerName: data.name}});
+      let profile = {...this.state.profile}
+      profile.summonerName = data.name
+      this.setState({profile})
       return data;
     }
     catch(err){
@@ -165,9 +169,8 @@ class Profile extends React.Component {
       let goldS = 0;
       let currentmatch;
       let rankedCount = {"MID":0, "TOP":0, "SUPP":0, "BOT":0, "JG":0};
-      if(data.matches != null){
+      if(data.matches != null && data.matches !== undefined){
         for(i = 0; i < data.matches.length; i++) {
-          
           if(i <= NUM_RECENT_MATCH){
             currentmatch = await this.getMatchStats(data.matches[i]);
             kills += currentmatch.kills;
@@ -197,24 +200,31 @@ class Profile extends React.Component {
             rankedCount["TOP"] += 1;
           }
         }
+        kpS /= NUM_RECENT_MATCH;
+        goldS /= NUM_RECENT_MATCH;
+        dmgS /= NUM_RECENT_MATCH;
+    
+    
+        let kda = (kills + assists) / deaths;
+        let cspm = cs/matchtime*60;
+        this.setState({stats: {kda: kda, cspm: cspm, kpS: kpS, goldS: goldS, dmgS: dmgS}});
+        let firstPref = Object.keys(rankedCount).reduce((a, b) => rankedCount[a] > rankedCount[b] ? a : b)
+        this.setState({prefRole: firstPref});
+        let temp = rankedCount;
+        delete temp[firstPref];
+        let secondPref = Object.keys(temp).reduce((a, b) => temp[a] > temp[b] ? a : b)
+        this.setState({prefRole2: secondPref});
+        this.setState({role: rankedCount});
   
       }
+      else {
+        this.setState({stats: {kda: 2, cspm: 5, kpS: 0.2, goldS: 0.2, dmgS: 0.2}});
+        this.setState({prefRole: "SUPP"});
+        this.setState({prefRole2: "MID"});
+        this.setState({role: "dummydata"});
+      }
   
-      kpS /= NUM_RECENT_MATCH;
-      goldS /= NUM_RECENT_MATCH;
-      dmgS /= NUM_RECENT_MATCH;
-  
-  
-      let kda = (kills + assists) / deaths;
-      let cspm = cs/matchtime*60;
-      this.setState({stats: {kda: kda, cspm: cspm, kpS: kpS, goldS: goldS, dmgS: dmgS}});
-      let firstPref = Object.keys(rankedCount).reduce((a, b) => rankedCount[a] > rankedCount[b] ? a : b)
-      this.setState({prefRole: firstPref});
-      let temp = rankedCount;
-      delete temp[firstPref];
-      let secondPref = Object.keys(temp).reduce((a, b) => temp[a] > temp[b] ? a : b)
-      this.setState({prefRole2: secondPref});
-      this.setState({role: rankedCount});
+      
     }
     catch(err) {
       console.log(err);
@@ -237,7 +247,7 @@ class Profile extends React.Component {
     let friendlyteam = []
     for(let i = 0; i < 10; i++) {
       try{
-        if(matchdata.participantIdentities[i].player.summonerName === this.state.profile.summonerName){
+        if(this.cleanName(matchdata.participantIdentities[i].player.summonerName) === this.cleanName(this.state.query)){
           participantid = i;
           teamid = matchdata.participants[i].teamId;
         }
@@ -263,7 +273,6 @@ class Profile extends React.Component {
     }
 
   
-    //console.log(matchdata.participants[participantid].stats)
     let stats = {}
     try {
       stats = matchdata.participants[participantid].stats;
@@ -274,12 +283,6 @@ class Profile extends React.Component {
       let assists = stats.assists;
       let cs = stats.totalMinionsKilled;
 
-      // console.log(kda);
-      // console.log(kills + " " + deaths + " " + assists);
-      // console.log(cspm);
-      // console.log(cs);
-      // console.log(matchtime);
-      //this.setState({stats: {kda: kda, cspm: cspm}});
       return Object.assign({kills: kills, deaths: deaths, assists: assists, cs: cs, matchtime: matchtime}, teamstats);
     }
     catch(err) {
@@ -287,6 +290,10 @@ class Profile extends React.Component {
     }
 
     
+  }
+
+  cleanName = (name) => {
+    return name.replace(/\s+/g, '').toLowerCase();
   }
 
   
@@ -348,6 +355,7 @@ class Profile extends React.Component {
     const goldS = this.state.stats.goldS;
     const kpS = this.state.stats.kpS;
     const dmgS = this.state.stats.dmgS;
+    const role = this.state.role;
     const closeStyle = {
       height: "100%",
 
@@ -373,7 +381,7 @@ class Profile extends React.Component {
                 </Grid>
                 <Grid item xs={12} sm={9}>
                   
-                  {(summonerName != null && tier != null && lp != null && cspm != null && kda != null && prefRole != null && prefRole2 != null)?
+                  {(summonerName != null && tier != null && lp != null && cspm != null && kda != null && prefRole != null && prefRole2 != null && role != null)?
                   <div>
                     <Score
                     name={summonerName}
@@ -394,7 +402,9 @@ class Profile extends React.Component {
                   
                   </div>
                   
-                  : <CircularProgress />
+                  : 
+                      <CircularProgress />
+                      
                   }
                   
                   </Grid>
