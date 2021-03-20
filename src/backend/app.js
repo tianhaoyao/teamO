@@ -2,7 +2,6 @@
 const express = require('express')
 const path = require('path')
 require('dotenv').config({path: path.resolve(__dirname, '../../.env')})
-var cors = require('cors')
 const app = express()
 const port = process.env.PORT;
 const API_KEY = process.env.REACT_APP_TEAMO_API_KEY;
@@ -25,7 +24,6 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true } )
     .catch((err) => console.log(err));
 
 
-app.use(cors())
 
 async function insertPlayer(name, tier, rank, lp, cs, kda, dmg, gold, kp, pref1, pref2) {
     Players.exists({ name: name }, function(err, res) {
