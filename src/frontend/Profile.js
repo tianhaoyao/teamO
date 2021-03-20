@@ -8,15 +8,11 @@ import Score from './Score';
 import Icons from './Icons';
 
 const NUM_RECENT_MATCH = 3;
-
-const API_KEY = process.env.REACT_APP_TEAMO_API_KEY;
+const BACKEND_URL = 'https://team-sort.herokuapp.com/';
 
 class Profile extends React.Component {
   constructor(props) {
     super(props)
-    
-    
-    
     this.getRank = this.getRank.bind(this);
     this.getProfile = this.getProfile.bind(this);
     this.getCache = this.getCache.bind(this);
@@ -42,7 +38,7 @@ class Profile extends React.Component {
   }
 
   getCache = async () => {
-    const url = `http://localhost:3001/cache/${this.state.query}/`;
+    const url = BACKEND_URL + `cache/${this.state.query}/`;
     console.log(url)
     try{
       const response = await fetch(url);
@@ -68,7 +64,7 @@ class Profile extends React.Component {
   }
 
   insertCache = (name, tier, rank, lp, cs, kda, dmg, gold, kp, pref1, pref2) => {
-    const url = `http://localhost:3001/insertcache/`;
+    const url = BACKEND_URL + `insertcache/`;
     const res = fetch(url, {
       method: 'POST',
       headers: {
@@ -116,7 +112,7 @@ class Profile extends React.Component {
   }
 
   getProfile = async () => {
-    const url = `http://localhost:3001/summonerName/${this.state.query}/`;
+    const url = BACKEND_URL + `summonerName/${this.state.query}/`;
     try{
       const response = await fetch(url);
     
@@ -137,7 +133,7 @@ class Profile extends React.Component {
     try{
       let id = await this.getProfile();
 
-      const url = `http://localhost:3001/summonerId/${id.id}`;
+      const url = BACKEND_URL + `summonerId/${id.id}`;
     
       const response = await fetch(url);
       const data = await response.json();
@@ -179,7 +175,7 @@ class Profile extends React.Component {
   getRole = async () => {
     try{
       let id = await this.getProfile();
-      let url = `http://localhost:3001/games/${id.accountId}`;
+      let url = BACKEND_URL + `games/${id.accountId}`;
     
       let response = await fetch(url);
       let data = await response.json();
@@ -261,7 +257,7 @@ class Profile extends React.Component {
   }
 
   getMatchStats = async (match) => {
-    const url = `http://localhost:3001/match/${match.gameId}`;
+    const url = BACKEND_URL + `match/${match.gameId}`;
     const response = await fetch(url);
     const matchdata = await response.json();
 
