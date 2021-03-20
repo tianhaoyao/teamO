@@ -1,7 +1,13 @@
 
 # TeamO
 
-React Webapp that divides summoners into even teams. Frontend using Material-UI. Backend using Node, Express, MongoDB (soon). Calls Riot-API. Uses Redux to keep states for players.
+React Webapp that divides summoners into even teams. Frontend using Material-UI. Backend using Node, Express, MongoDB/Mongoose. Calls Riot-API. Uses Redux to keep states for players.
+
+## How it works
+
+1. Grabs a variety of stats using Riot API to calculate a score for each player (see below)
+2. Sorts players via that score and preferred roles
+3. Player is cached into database to ease load on API
 
 ## Calculating Player Score
 
