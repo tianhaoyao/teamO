@@ -4,7 +4,7 @@ const path = require('path')
 require('dotenv').config({path: path.resolve(__dirname, '../../.env')})
 var cors = require('cors')
 const app = express()
-const port = 3001
+const port = process.env.PORT;
 const API_KEY = process.env.REACT_APP_TEAMO_API_KEY;
 var bodyParser = require('body-parser')
 const axios = require('axios');
