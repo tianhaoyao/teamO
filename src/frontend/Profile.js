@@ -50,11 +50,13 @@ class Profile extends React.Component {
       console.log(data)
       if(Object.keys(data).length != 0) {
         console.log("found")
+        this.setState({ cached: true })
         this.setUsingCache(data);
         return data;
       }
       else {
         console.log("notfound")
+        this.setState({ cached: false })
         this.getRank();
         this.getRole();
       }
@@ -63,6 +65,31 @@ class Profile extends React.Component {
     catch(err){
       console.log(err)
     }
+  }
+
+  insertCache = (name, tier, rank, lp, cs, kda, dmg, gold, kp, pref1, pref2) => {
+    const url = `http://localhost:3001/insertcache/`;
+    const res = fetch(url, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: name,
+        tier: tier,
+        rank: rank,
+        lp: lp,
+        cs: cs,
+        kda: kda,
+        dmg: dmg,
+        gold: gold,
+        kp: kp,
+        pref1: pref1,
+        pref2: pref2
+      })
+    });
+
   }
 
   setUsingCache = async(data) => {
@@ -361,6 +388,15 @@ class Profile extends React.Component {
 
     };
     console.log(this.state)
+    if(!this.state.cached) {
+      if(summonerName != null && tier != null && lp != null && cspm != null && kda != null && prefRole != null && prefRole2 != null && role != null) {
+        this.setState({cached: true})
+        this.insertCache(summonerName, tier, division, lp, cspm, kda, dmgS, goldS, kpS, prefRole, prefRole2)
+      }
+      
+    }
+    
+
     return (
       <div className="Profile">
         <Card className="profile">

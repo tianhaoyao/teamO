@@ -36,20 +36,33 @@ let requestcount = 0;
 app.use(cors())
 
 async function insertPlayer(name, tier, rank, lp, cs, kda, dmg, gold, kp, pref1, pref2) {
-    const player = new Players({
-        name: name,
-        tier: tier,
-        rank: rank,
-        lp: lp,
-        cs: cs,
-        kda: kda,
-        dmg: dmg,
-        gold: gold,
-        kp: kp,
-        pref1: pref1,
-        pref2: pref2
+    Players.exists({ name: name }, function(err, res) {
+        if(err) {
+            console.log(err)
+        }
+        if(!res){
+            console.log(res)
+            const player = new Players({
+                name: name,
+                tier: tier,
+                rank: rank,
+                lp: lp,
+                cs: cs,
+                kda: kda,
+                dmg: dmg,
+                gold: gold,
+                kp: kp,
+                pref1: pref1,
+                pref2: pref2
+            })
+            player.save()
+        }
+        else {
+            console.log("exists arleady")
+        }
     })
-    player.save()
+    
+    
 }
 
 async function getAccount(name) {
