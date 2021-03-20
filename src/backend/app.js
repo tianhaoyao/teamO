@@ -13,7 +13,6 @@ const bodyParser = require('body-parser')
 const axios = require('axios');
 const mongoose = require('mongoose')
 const Players = require('./models/player')
-const MongoClient = require('mongodb').MongoClient;
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -24,13 +23,6 @@ const dbURI = 'mongodb+srv://' + MONGO_USER + ':' + MONGO_USER_PASSWORD + '@team
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true } )
     .then((result) => console.log('db connected'))
     .catch((err) => console.log(err));
-// const client = new MongoClient(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
-// client.connect(err => {
-//     const collection = client.db("players").collection("players");
-//     // perform actions on the collection object
-//     client.close();
-//   });
-let requestcount = 0;
 
 
 app.use(cors())
@@ -57,9 +49,6 @@ async function insertPlayer(name, tier, rank, lp, cs, kda, dmg, gold, kp, pref1,
             })
             player.save()
         }
-        else {
-            console.log("exists arleady")
-        }
     })
     
     
@@ -67,11 +56,8 @@ async function insertPlayer(name, tier, rank, lp, cs, kda, dmg, gold, kp, pref1,
 
 async function getAccount(name) {
     try {
-        const url = `https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${API_KEY}`;
+        const url = encodeURI(`https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${API_KEY}`);
         const response = await axios.get(url);
-        requestcount++;
-        console.log(requestcount);
-        console.log("getAccount")
 
         const data = {
             id: response.data.id,
@@ -90,10 +76,8 @@ async function getSummoner(id) {
     try {
         const url = `https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/${id}?api_key=${API_KEY}`;
         const response = await axios.get(url);
-        requestcount++;
-        console.log(requestcount);
-        console.log("getSummoner")
         return response.data
+
     } catch (error) {
       console.error(error);
     }
@@ -103,14 +87,11 @@ async function getGames(accountId) {
     try {
         const url = `https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${accountId}?queue=420&api_key=${API_KEY}`;
         const response = await axios.get(url);
-        requestcount++;
-        console.log(requestcount);
-        console.log("getGames")
         return response.data
+
     } catch (error) {
         const url = `https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${accountId}?queue=400&api_key=${API_KEY}`;
         const response = await axios.get(url);
-        console.log("normals");
         return response.data
     }
 }
@@ -119,10 +100,8 @@ async function getMatch(matchId) {
     try {
         const url = `https://na1.api.riotgames.com/lol/match/v4/matches/${matchId}?api_key=${API_KEY}`;
         const response = await axios.get(url);
-        requestcount++;
-        console.log(requestcount);
-        console.log("getMatch")
         return response.data
+
     } catch (error) {
       console.error(error);
     }
@@ -174,12 +153,9 @@ app.get('/cache/:summonerName', async (req, res) => {
             console.log(err);
         }
         if(document != undefined) {
-            console.log("found, sending")
-            console.log(document)
             res.send(document)
         }
         else {
-            console.log("didnt find!!")
             res.send({})
         }
     })
