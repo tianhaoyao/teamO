@@ -8,10 +8,12 @@ const API_KEY = process.env.REACT_APP_TEAMO_API_KEY;
 const MONGO_USER = process.env.MONGO_USER;
 const MONGO_USER_PASSWORD = process.env.MONGO_USER_PASSWORD;
 const bodyParser = require('body-parser')
-
+const cors = require('cors')
 const axios = require('axios');
 const mongoose = require('mongoose')
 const Players = require('./models/player')
+
+app.use(cors())
 
 app.use(bodyParser.urlencoded({
     extended: true
