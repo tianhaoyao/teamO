@@ -1,6 +1,10 @@
 {
   "name": "team-o",
   "version": "0.1.0",
+  "engines": {
+    "node": "14.x",
+    "yarn": "1.x"
+  },
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.0",
@@ -22,7 +26,6 @@
   },
   "scripts": {
     "start": "cd src/backend && yarn install && node app.js",
-    "start-front": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
