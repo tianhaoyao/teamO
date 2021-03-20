@@ -3,6 +3,8 @@
 
 React Webapp that divides summoners into even teams. Frontend using Material-UI. Backend using Node, Express, MongoDB/Mongoose. Calls Riot-API. Uses Redux to keep states for players.
 
+Try it out here: https://teem0.herokuapp.com/
+
 ## How it works
 
 1. Grabs a variety of stats using Riot API to calculate a score for each player (see below)
