@@ -7,7 +7,7 @@ import {Grid, Card, CardActionArea, CardContent, Typography, TextField, Circular
 import Score from './Score';
 import Icons from './Icons';
 
-const NUM_RECENT_MATCH = 1;
+const NUM_RECENT_MATCH = 3;
 
 const API_KEY = process.env.REACT_APP_TEAMO_API_KEY;
 
@@ -19,6 +19,8 @@ class Profile extends React.Component {
     
     this.getRank = this.getRank.bind(this);
     this.getProfile = this.getProfile.bind(this);
+    this.getCache = this.getCache.bind(this);
+    this.setUsingCache = this.setUsingCache.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.getRole = this.getRole.bind(this);
@@ -34,11 +36,84 @@ class Profile extends React.Component {
     if(this.props.player) {
       this.setState({query: this.props.player});
       this.setState({submitted: true});
-      this.getRank();
-      this.getRole();
+      this.getCache();
+      
     }
   }
 
+  getCache = async () => {
+    const url = `http://localhost:3001/cache/${this.state.query}/`;
+    console.log(url)
+    try{
+      const response = await fetch(url);
+      const data = await response.json();
+      console.log(data)
+      if(Object.keys(data).length != 0) {
+        console.log("found")
+        this.setState({ cached: true })
+        this.setUsingCache(data);
+        return data;
+      }
+      else {
+        console.log("notfound")
+        this.setState({ cached: false })
+        this.getRank();
+        this.getRole();
+      }
+      
+    }
+    catch(err){
+      console.log(err)
+    }
+  }
+
+  insertCache = (name, tier, rank, lp, cs, kda, dmg, gold, kp, pref1, pref2) => {
+    const url = `http://localhost:3001/insertcache/`;
+    const res = fetch(url, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: name,
+        tier: tier,
+        rank: rank,
+        lp: lp,
+        cs: cs,
+        kda: kda,
+        dmg: dmg,
+        gold: gold,
+        kp: kp,
+        pref1: pref1,
+        pref2: pref2
+      })
+    });
+
+  }
+
+  setUsingCache = async(data) => {
+    this.setState({
+      profile: {
+        summonerName: data.name,
+        tier: data.tier,
+        rank: data.rank,
+        leaguePoints: data.lp
+      }, 
+      query: this.props.player, 
+      prefRole: data.pref1, 
+      prefRole2: data.pref2, 
+      role: {
+        dummydata: 0
+      },
+      stats: {
+        cspm: data.cs,
+        dmgS: data.dmg,
+        goldS: data.gold,
+        kda: data.kda,
+        kpS: data.kp
+      }})
+  }
 
   getProfile = async () => {
     const url = `http://localhost:3001/summonerName/${this.state.query}/`;
@@ -46,8 +121,9 @@ class Profile extends React.Component {
       const response = await fetch(url);
     
       const data = await response.json();
-
-      this.setState({profile: {summonerName: data.name}});
+      let profile = {...this.state.profile}
+      profile.summonerName = data.name
+      this.setState({profile})
       return data;
     }
     catch(err){
@@ -120,9 +196,8 @@ class Profile extends React.Component {
       let goldS = 0;
       let currentmatch;
       let rankedCount = {"MID":0, "TOP":0, "SUPP":0, "BOT":0, "JG":0};
-      if(data.matches != null){
+      if(data.matches != null && data.matches !== undefined){
         for(i = 0; i < data.matches.length; i++) {
-          
           if(i <= NUM_RECENT_MATCH){
             currentmatch = await this.getMatchStats(data.matches[i]);
             kills += currentmatch.kills;
@@ -152,24 +227,31 @@ class Profile extends React.Component {
             rankedCount["TOP"] += 1;
           }
         }
+        kpS /= NUM_RECENT_MATCH;
+        goldS /= NUM_RECENT_MATCH;
+        dmgS /= NUM_RECENT_MATCH;
+    
+    
+        let kda = (kills + assists) / deaths;
+        let cspm = cs/matchtime*60;
+        this.setState({stats: {kda: kda, cspm: cspm, kpS: kpS, goldS: goldS, dmgS: dmgS}});
+        let firstPref = Object.keys(rankedCount).reduce((a, b) => rankedCount[a] > rankedCount[b] ? a : b)
+        this.setState({prefRole: firstPref});
+        let temp = rankedCount;
+        delete temp[firstPref];
+        let secondPref = Object.keys(temp).reduce((a, b) => temp[a] > temp[b] ? a : b)
+        this.setState({prefRole2: secondPref});
+        this.setState({role: rankedCount});
   
       }
+      else {
+        this.setState({stats: {kda: 2, cspm: 5, kpS: 0.2, goldS: 0.2, dmgS: 0.2}});
+        this.setState({prefRole: "SUPP"});
+        this.setState({prefRole2: "MID"});
+        this.setState({role: "dummydata"});
+      }
   
-      kpS /= NUM_RECENT_MATCH;
-      goldS /= NUM_RECENT_MATCH;
-      dmgS /= NUM_RECENT_MATCH;
-  
-  
-      let kda = (kills + assists) / deaths;
-      let cspm = cs/matchtime*60;
-      this.setState({stats: {kda: kda, cspm: cspm, kpS: kpS, goldS: goldS, dmgS: dmgS}});
-      let firstPref = Object.keys(rankedCount).reduce((a, b) => rankedCount[a] > rankedCount[b] ? a : b)
-      this.setState({prefRole: firstPref});
-      let temp = rankedCount;
-      delete temp[firstPref];
-      let secondPref = Object.keys(temp).reduce((a, b) => temp[a] > temp[b] ? a : b)
-      this.setState({prefRole2: secondPref});
-      this.setState({role: rankedCount});
+      
     }
     catch(err) {
       console.log(err);
@@ -192,7 +274,7 @@ class Profile extends React.Component {
     let friendlyteam = []
     for(let i = 0; i < 10; i++) {
       try{
-        if(matchdata.participantIdentities[i].player.summonerName === this.state.profile.summonerName){
+        if(this.cleanName(matchdata.participantIdentities[i].player.summonerName) === this.cleanName(this.state.query)){
           participantid = i;
           teamid = matchdata.participants[i].teamId;
         }
@@ -218,7 +300,6 @@ class Profile extends React.Component {
     }
 
   
-    //console.log(matchdata.participants[participantid].stats)
     let stats = {}
     try {
       stats = matchdata.participants[participantid].stats;
@@ -229,12 +310,6 @@ class Profile extends React.Component {
       let assists = stats.assists;
       let cs = stats.totalMinionsKilled;
 
-      // console.log(kda);
-      // console.log(kills + " " + deaths + " " + assists);
-      // console.log(cspm);
-      // console.log(cs);
-      // console.log(matchtime);
-      //this.setState({stats: {kda: kda, cspm: cspm}});
       return Object.assign({kills: kills, deaths: deaths, assists: assists, cs: cs, matchtime: matchtime}, teamstats);
     }
     catch(err) {
@@ -242,6 +317,10 @@ class Profile extends React.Component {
     }
 
     
+  }
+
+  cleanName = (name) => {
+    return name.replace(/\s+/g, '').toLowerCase();
   }
 
   
@@ -281,8 +360,7 @@ class Profile extends React.Component {
   handleSubmit(event) {
 
     this.setState({submitted: true});
-    this.getRank();
-    this.getRole();
+    this.getCache();
     event.preventDefault();
 
     
@@ -296,7 +374,6 @@ class Profile extends React.Component {
     const summonerName = this.state.profile.summonerName;
     const tier = this.state.profile.tier;
     const division = this.state.profile.rank;
-    const role = this.state.role;
     const lp = this.state.profile.leaguePoints;
     const prefRole = this.state.prefRole;
     const prefRole2 = this.state.prefRole2;
@@ -305,10 +382,21 @@ class Profile extends React.Component {
     const goldS = this.state.stats.goldS;
     const kpS = this.state.stats.kpS;
     const dmgS = this.state.stats.dmgS;
+    const role = this.state.role;
     const closeStyle = {
       height: "100%",
 
     };
+    console.log(this.state)
+    if(!this.state.cached) {
+      if(summonerName != null && tier != null && lp != null && cspm != null && kda != null && prefRole != null && prefRole2 != null && role != null) {
+        this.setState({cached: true})
+        this.insertCache(summonerName, tier, division, lp, cspm, kda, dmgS, goldS, kpS, prefRole, prefRole2)
+      }
+      
+    }
+    
+
     return (
       <div className="Profile">
         <Card className="profile">
@@ -329,7 +417,7 @@ class Profile extends React.Component {
                 </Grid>
                 <Grid item xs={12} sm={9}>
                   
-                  {(summonerName != null && tier != null && role != null && lp != null && cspm != null && kda != null)?
+                  {(summonerName != null && tier != null && lp != null && cspm != null && kda != null && prefRole != null && prefRole2 != null && role != null)?
                   <div>
                     <Score
                     name={summonerName}
@@ -350,7 +438,9 @@ class Profile extends React.Component {
                   
                   </div>
                   
-                  : <CircularProgress />
+                  : 
+                      <CircularProgress />
+                      
                   }
                   
                   </Grid>
