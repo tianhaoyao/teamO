@@ -1,1 +1,1 @@
-web: yarn start
+web:cd src/frontend && yarn start
