@@ -22,7 +22,7 @@
     "serialize-javascript": "^3.1.0"
   },
   "scripts": {
-    "start": "yarn install && cd src/backend && node app.js",
+    "start": "cd src/backend && node app.js",
     "build": "yarn install"
   },
   "eslintConfig": {
