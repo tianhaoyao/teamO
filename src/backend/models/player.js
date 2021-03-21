@@ -6,6 +6,10 @@ const playerSchema = new Schema({
         type: String,
         required: true
     },
+    simplename: {
+        type: String,
+        required: true
+    },
     tier: {
         type: String,
         required: true

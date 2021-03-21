@@ -27,8 +27,8 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true } )
 
 
 
-async function insertPlayer(name, tier, rank, lp, cs, kda, dmg, gold, kp, pref1, pref2) {
-    Players.exists({ name: name }, function(err, res) {
+async function insertPlayer(name, simplename, tier, rank, lp, cs, kda, dmg, gold, kp, pref1, pref2) {
+    Players.exists({ simplename: simplename }, function(err, res) {
         if(err) {
             console.log(err)
         }
@@ -36,6 +36,7 @@ async function insertPlayer(name, tier, rank, lp, cs, kda, dmg, gold, kp, pref1,
             console.log(res)
             const player = new Players({
                 name: name,
+                simplename: simplename,
                 tier: tier,
                 rank: rank,
                 lp: lp,
@@ -148,7 +149,8 @@ app.get('/match/:matchId', async (req, res) => {
 })
 
 app.get('/cache/:summonerName', async (req, res) => {
-    Players.findOne({ name: req.params.summonerName }, function(err, document) {
+    simplename = req.params.summonerName.replace(/\s+/g, '').toLowerCase();
+    Players.findOne({ simplename: simplename }, function(err, document) {
         if(err) {
             console.log(err);
         }
@@ -164,6 +166,7 @@ app.get('/cache/:summonerName', async (req, res) => {
 app.post('/insertcache/', function(req, res){
     try {
         let name = req.body.name
+        let simplename = req.body.simplename
         let tier = req.body.tier
         let rank = req.body.rank
         let lp = parseInt(req.body.lp)
@@ -175,7 +178,7 @@ app.post('/insertcache/', function(req, res){
         let pref1 = req.body.pref1
         let pref2 = req.body.pref2
 
-        insertPlayer(name, tier, rank, lp, cs, kda, dmg, gold, kp, pref1, pref2)
+        insertPlayer(name, simplename, tier, rank, lp, cs, kda, dmg, gold, kp, pref1, pref2)
         res.sendStatus(200);
     }
     catch(err) {
