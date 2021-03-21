@@ -71,6 +71,7 @@ $ cd teamO
 $ yarn install
 $ yarn start
 ```
-RiotGames API key required in .env file
+RiotGames API key required in .env file: REACT_APP_TEAMO_API_KEY=
+MongoDB Access also required: MONGO_USER= MONGO_USER_PASSWORD=
 
-# teamO
+# TeamO
