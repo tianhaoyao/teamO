@@ -3,7 +3,11 @@
 
 React Webapp that divides summoners into even teams. Frontend using Material-UI. Backend using Node, Express, MongoDB/Mongoose. Calls Riot-API. Uses Redux to keep states for players.
 
-Try it out here: https://teem0.herokuapp.com/
+__This repository serves as the backend for the project. You can find the frontend repo here: https://github.com/tianhaoyao/teamO-frontend__
+
+__The backend is currently being hosted here: https://team-sort.herokuapp.com/
+
+Try the app out here: https://teem0.herokuapp.com/
 
 ## How it works
 
