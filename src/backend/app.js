@@ -28,29 +28,35 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true } )
 
 
 async function insertPlayer(name, simplename, tier, rank, lp, cs, kda, dmg, gold, kp, pref1, pref2) {
-    Players.exists({ simplename: simplename }, function(err, res) {
-        if(err) {
-            console.log(err)
-        }
-        if(!res){
-            console.log(res)
-            const player = new Players({
-                name: name,
-                simplename: simplename,
-                tier: tier,
-                rank: rank,
-                lp: lp,
-                cs: cs,
-                kda: kda,
-                dmg: dmg,
-                gold: gold,
-                kp: kp,
-                pref1: pref1,
-                pref2: pref2
-            })
-            player.save()
-        }
-    })
+    try{
+        Players.exists({ simplename: simplename }, function(err, res) {
+            if(err) {
+                console.log(err)
+            }
+            if(!res){
+                console.log(res)
+                const player = new Players({
+                    name: name,
+                    simplename: simplename,
+                    tier: tier,
+                    rank: rank,
+                    lp: lp,
+                    cs: cs,
+                    kda: kda,
+                    dmg: dmg,
+                    gold: gold,
+                    kp: kp,
+                    pref1: pref1,
+                    pref2: pref2
+                })
+                player.save()
+            }
+        })
+    }
+    catch(err) {
+        console.log(err)
+    }
+    
     
     
 }
@@ -149,8 +155,9 @@ app.get('/match/:matchId', async (req, res) => {
 })
 
 app.get('/cache/:summonerName', async (req, res) => {
-    simplename = req.params.summonerName.replace(/\s+/g, '').toLowerCase();
-    Players.findOne({ simplename: simplename }, function(err, document) {
+    try{
+        simplename = req.params.summonerName.replace(/\s+/g, '').toLowerCase();
+        Players.findOne({ simplename: simplename }, function(err, document) {
         if(err) {
             console.log(err);
         }
@@ -161,6 +168,11 @@ app.get('/cache/:summonerName', async (req, res) => {
             res.send({})
         }
     })
+    }
+    catch(err){
+        console.log(err)
+    }
+    
 })
 
 app.post('/insertcache/', function(req, res){
@@ -187,14 +199,19 @@ app.post('/insertcache/', function(req, res){
 })
 
 app.get('/cache/', async (req, res) => {
-    
-    Players.find()
+    try{
+        Players.find()
         .then((result) => {
             res.send(result);
         })
         .catch((err) => {
             console.log(err)
         })
+    }
+    catch(err) {
+        console.log(err)
+    }
+    
 
 
 })
