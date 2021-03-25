@@ -1,17 +1,18 @@
 
-const express = require('express')
-const path = require('path')
-require('dotenv').config({path: path.resolve(__dirname, '../../.env')})
-const app = express()
+const express = require('express');
+const path = require('path');
+require('dotenv').config({path: path.resolve(__dirname, '../../.env')});
+const app = express();
 const port = process.env.PORT;
 const API_KEY = process.env.REACT_APP_TEAMO_API_KEY;
 const MONGO_USER = process.env.MONGO_USER;
 const MONGO_USER_PASSWORD = process.env.MONGO_USER_PASSWORD;
-const bodyParser = require('body-parser')
-const cors = require('cors')
+const bodyParser = require('body-parser');
+const cors = require('cors');
 const axios = require('axios');
-const mongoose = require('mongoose')
-const Players = require('./models/player')
+const mongoose = require('mongoose');
+const Players = require('./models/player');
+const {body, validationResult} = require('express-validator');
 
 app.use(cors())
 
@@ -175,23 +176,38 @@ app.get('/cache/:summonerName', async (req, res) => {
     
 })
 
-app.post('/insertcache/', function(req, res){
+app.post('/insertcache/', 
+    [
+        body('name').isString().not().matches('[\(\)\/\{\}\<\>\;\~\|\\\\=\+`!@#$%\^&*():.,\'\"?]+'),
+        body('simplename').isString().not().matches('[A-Z\(\)\/\{\}\<\>\;\~\|\\\\=\+`!@#$%\^&*():.,\'\"?]+')
+    ],
+        function(req, res){
     try {
-        let name = req.body.name
-        let simplename = req.body.simplename
-        let tier = req.body.tier
-        let rank = req.body.rank
-        let lp = parseInt(req.body.lp)
-        let cs = parseFloat(req.body.cs)
-        let kda = parseFloat(req.body.kda)
-        let dmg = parseFloat(req.body.dmg)
-        let gold = parseFloat(req.body.gold)
-        let kp = parseFloat(req.body.kp)
-        let pref1 = req.body.pref1
-        let pref2 = req.body.pref2
+        const validationErr = validationResult(req);
+        console.log(validationErr)
+        if(!validationErr.isEmpty()){
+            console.log('rejected')
+            res.sendStatus(422)
+        }
+        else{
+            console.log('inserting')
+            let name = req.body.name
+            let simplename = req.body.simplename
+            let tier = req.body.tier
+            let rank = req.body.rank
+            let lp = parseInt(req.body.lp)
+            let cs = parseFloat(req.body.cs)
+            let kda = parseFloat(req.body.kda)
+            let dmg = parseFloat(req.body.dmg)
+            let gold = parseFloat(req.body.gold)
+            let kp = parseFloat(req.body.kp)
+            let pref1 = req.body.pref1
+            let pref2 = req.body.pref2
 
-        insertPlayer(name, simplename, tier, rank, lp, cs, kda, dmg, gold, kp, pref1, pref2)
-        res.sendStatus(200);
+            insertPlayer(name, simplename, tier, rank, lp, cs, kda, dmg, gold, kp, pref1, pref2)
+            res.sendStatus(200);
+        }
+        
     }
     catch(err) {
         console.log(err)
