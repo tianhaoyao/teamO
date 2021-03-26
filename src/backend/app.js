@@ -12,7 +12,7 @@ const cors = require('cors');
 const axios = require('axios');
 const mongoose = require('mongoose');
 const Players = require('./models/player');
-const {body, validationResult} = require('express-validator');
+const {param, body, validationResult} = require('express-validator');
 
 app.use(cors())
 
@@ -115,7 +115,11 @@ async function getMatch(matchId) {
     }
 }
 
-app.get('/summonerName/:name', async (req, res) => {
+app.get('/summonerName/:name', 
+[
+    param('name').isString().not().matches(/[\[\]\(\)\/\{\}\<\>\;\~\|\\\\=\+\`\!\@\#\$\%\^\&\*\(\)\:\.\,\'\"\?]+/),
+],
+async (req, res) => {
     try{
         let data = await getAccount(req.params.name)
         res.send(data)
@@ -125,7 +129,11 @@ app.get('/summonerName/:name', async (req, res) => {
     }
 })
 
-app.get('/summonerId/:id', async (req, res) => {
+app.get('/summonerId/:id', 
+[
+    param('id').matches(/^[a-zA-Z0-9\-\_]*$/)
+],
+async (req, res) => {
     try{
         let data = await getSummoner(req.params.id)
         res.send(data)
@@ -135,7 +143,11 @@ app.get('/summonerId/:id', async (req, res) => {
     }
 })
 
-app.get('/games/:accountId', async (req, res) => {
+app.get('/games/:accountId', 
+[
+    param('accountId').matches(/^[a-zA-Z0-9\-\_]*$/)
+],
+async (req, res) => {
     try{
         let data = await getGames(req.params.accountId)
         res.send(data)
@@ -145,7 +157,12 @@ app.get('/games/:accountId', async (req, res) => {
     }
 })
 
-app.get('/match/:matchId', async (req, res) => {
+app.get('/match/:matchId', 
+[
+    param('matchId').matches(/^[0-9]*$/)
+],
+
+async (req, res) => {
     try{
         let data = await getMatch(req.params.matchId)
         res.send(data)
@@ -155,7 +172,12 @@ app.get('/match/:matchId', async (req, res) => {
     }
 })
 
-app.get('/cache/:summonerName', async (req, res) => {
+app.get('/cache/:summonerName', 
+    [
+        param('summonerName').isString().not().matches(/[\[\]\(\)\/\{\}\<\>\;\~\|\\\\=\+\`\!\@\#\$\%\^\&\*\(\)\:\.\,\'\"\?]+/),
+    ],
+
+    async (req, res) => {
     try{
         simplename = req.params.summonerName.replace(/\s+/g, '').toLowerCase();
         Players.findOne({ simplename: simplename }, function(err, document) {
@@ -178,8 +200,18 @@ app.get('/cache/:summonerName', async (req, res) => {
 
 app.post('/insertcache/', 
     [
-        body('name').isString().not().matches('[\(\)\/\{\}\<\>\;\~\|\\\\=\+`!@#$%\^&*():.,\'\"?]+'),
-        body('simplename').isString().not().matches('[A-Z\(\)\/\{\}\<\>\;\~\|\\\\=\+`!@#$%\^&*():.,\'\"?]+')
+        body('name').isString().not().matches(/[\[\]\(\)\/\{\}\<\>\;\~\|\\\\=\+\`\!\@\#\$\%\^\&\*\(\)\:\.\,\'\"\?]+/),
+        body('simplename').isString().not().matches(/[A-Z\[\]\(\)\/\{\}\<\>\;\~\|\\\\=\+\`\!\@\#\$\%\^\&\*\(\)\:\.\,\'\"\?]+/),
+        body('tier').isString().matches(/^[A-Z]*$/),
+        body('rank').isString().matches(/^[IV]*$/),
+        body('lp').isInt(),
+        body('cs').isFloat(),
+        body('kda').isFloat(),
+        body('dmg').isFloat(),
+        body('gold').isFloat(),
+        body('kp').isFloat(),
+        body('pref1').isString().matches(/^[A-Z]*$/),
+        body('pref2').isString().matches(/^[A-Z]*$/)
     ],
         function(req, res){
     try {
