@@ -7,7 +7,7 @@ __This repository serves as the backend for the project. You can find the fronte
 
 __The backend is currently being hosted here: https://team-sort.herokuapp.com/__
 
-Try the app out here: https://www.teamoo.tk/
+Try the app out here: https://teem0.herokuapp.com/
 
 ## How it works
 
