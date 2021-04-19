@@ -8,6 +8,7 @@ __This repository serves as the backend for the project. You can find the fronte
 __The backend is currently being hosted here: https://team-sort.herokuapp.com/__
 
 Try the app out here: https://teem0.herokuapp.com/
+If the above link does not work: https://main.d2ppo6en99m27e.amplifyapp.com/
 
 ## How it works
 
