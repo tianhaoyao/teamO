@@ -6,6 +6,10 @@
 Try inputting 10 League of Legends summoner names in, separated by commas. If you are not familiar with League of Legends, here is a sample input you can do:
 `mimai, nanawo, zestbed, purehoney, bosnia, chasoll, vilhatarn, lower slower, jagasaki, rodagra1`
 
+## What does the results mean?
+
+These are the teams that my algorithm divides these players into (blue and red). It tries to create a balanced match so that both teams have an equal chance of winning.
+
 # Introduction
 
 React Webapp that divides summoners into even teams, deployed with AWS Amplify & Heroku. Frontend using Material-UI. Backend using Node, Express, MongoDB/Mongoose. Calls Riot-API. Uses Redux to keep states for players.
