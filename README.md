@@ -1,6 +1,13 @@
 
 # TeamO
 
+## What do I do?
+
+Try inputting 10 League of Legends summoner names in, separated by commas. If you are not familiar with League of Legends, here is a sample input you can do:
+`mimai, nanawo, zestbed, purehoney, bosnia, chasoll, vilhatarn, lower slower, jagasaki, rodagra1`
+
+# Introduction
+
 React Webapp that divides summoners into even teams, deployed with AWS Amplify & Heroku. Frontend using Material-UI. Backend using Node, Express, MongoDB/Mongoose. Calls Riot-API. Uses Redux to keep states for players.
 
 __This repository serves as the backend for the project. You can find the frontend repo here: https://github.com/tianhaoyao/teamO-frontend__
@@ -10,6 +17,7 @@ __The backend is currently being hosted here: https://team-sort.herokuapp.com/__
 Try the app out here: https://teem0.herokuapp.com/ 
 
 If the above link does not work: https://main.d2ppo6en99m27e.amplifyapp.com/
+
 
 ## How it works
 
